@@ -1,0 +1,9 @@
+node_modules/
+web/dist/
+output/article/*
+!output/article/.gitkeep
+output/wechat-images/**
+!output/wechat-images/.gitkeep
+data/settings.json
+*.log
+.DS_Store

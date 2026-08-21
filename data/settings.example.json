@@ -1,0 +1,34 @@
+{
+  "llm": {
+    "base_url": "https://api.deepseek.com/v1",
+    "api_key": "",
+    "model": "deepseek-chat"
+  },
+  "wechat": {
+    "appid": "",
+    "appsecret": "",
+    "author": ""
+  },
+  "workshop": {
+    "minChars": 800,
+    "maxChars": 2000,
+    "format": "html",
+    "useTemplate": true,
+    "defaultTemplate": "simple-card",
+    "platforms": ["wechat", "xiaohongshu", "script"],
+    "referenceRatio": 0.35,
+    "autoSearch": true,
+    "coverMode": "local"
+  },
+  "hotSources": {
+    "baidu": true,
+    "toutiao": true,
+    "weibo": true,
+    "juejin": true,
+    "douyin": true,
+    "xiaohongshu": true,
+    "bilibili": true,
+    "weixin": false,
+    "twitter": false
+  }
+}
