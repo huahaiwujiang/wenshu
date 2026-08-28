@@ -154,7 +154,7 @@ onMounted(async () => {
   try {
     templates.value = await api.listTemplates();
     platformOptions.value = (await api.listPlatforms()).filter((p) =>
-      ["wechat", "xiaohongshu", "script", "markdown", "txt"].includes(p.id),
+      ["wechat", "carousel", "xiaohongshu", "script", "markdown", "txt"].includes(p.id),
     );
     const settings = await api.getSettings();
     if (settings.workshop?.platforms?.length) platforms.value = [...settings.workshop.platforms];

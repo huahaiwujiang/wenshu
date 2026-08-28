@@ -5,7 +5,7 @@ import { formatToPlatform, renderPlatform } from "./content/renderers.js";
 import { fetchReferenceUrls, searchTopicSnippets, type ResearchSnippet } from "./content/research.js";
 import { pickRandomHotTopic } from "./hot/index.js";
 import { chatWithSettings } from "./llm.js";
-import { readSettings, readTemplate, writeArticlePackage } from "./files.js";
+import { readSettings, readTemplate, slugFromArticleIrPath, writeArticlePackage } from "./files.js";
 import type { Settings } from "./paths.js";
 import {
   buildResearchBlock,
@@ -83,7 +83,7 @@ async function loadIrFromInput(
 /** 封面 → 多平台渲染 → 落盘（无需 LLM） */
 export async function finalizeWorkshopPackage(
   ir: ArticleIR,
-  input: Pick<GenerateInput, "templateId" | "platforms">,
+  input: Pick<GenerateInput, "templateId" | "platforms" | "irFile">,
   log: LogFn,
   meta: { topic: string; source?: { id: string; name: string } },
 ): Promise<GenerateResult> {
@@ -100,12 +100,15 @@ export async function finalizeWorkshopPackage(
     await log("warn", "未解析到封面，发布时将用占位图");
   }
 
+  const explicitPlatforms = Boolean(input.platforms?.length);
   const wanted = new Set<PlatformId>(
-    (input.platforms?.length ? input.platforms : settings.workshop.platforms) as PlatformId[],
+    (explicitPlatforms ? input.platforms! : settings.workshop.platforms) as PlatformId[],
   );
-  const fromFormat = formatToPlatform(settings.workshop.format);
-  if (fromFormat) wanted.add(fromFormat);
-  if (settings.workshop.format === "html") wanted.add("wechat");
+  if (!explicitPlatforms) {
+    const fromFormat = formatToPlatform(settings.workshop.format);
+    if (fromFormat) wanted.add(fromFormat);
+    if (settings.workshop.format === "html") wanted.add("wechat");
+  }
 
   let templateHtml: string | undefined;
   const tplId = input.templateId || settings.workshop.defaultTemplate;
@@ -129,7 +132,8 @@ export async function finalizeWorkshopPackage(
     await log("info", `已渲染：${platform} → *.${rendered.filenameSuffix}.${rendered.ext}`);
   }
 
-  const saved = await writeArticlePackage(ir, variants);
+  const presetSlug = input.irFile ? slugFromArticleIrPath(input.irFile) : undefined;
+  const saved = await writeArticlePackage(ir, variants, presetSlug ? { slug: presetSlug } : undefined);
   await log("info", `已保存 IR 包：${saved.irFile}`);
 
   return {
@@ -198,7 +202,7 @@ export async function runWorkshopGenerate(input: GenerateInput, log: LogFn): Pro
   const hasLlmKey = Boolean(settings.llm.api_key?.trim());
   if (!hasLlmKey && !input.localLlm) {
     throw new Error(
-      "未配置 llm.api_key。Agent 入口请先用对话内模型生成 IR JSON，再执行：npx tsx scripts/workshop-cli.ts --ir-file <path> --platforms wechat,…\n" +
+      "未配置 llm.api_key。Agent 入口请先用对话内模型生成 IR JSON 写入 output/article/{slug}.json，再执行：npx tsx scripts/workshop-cli.ts --ir-file output/article/{slug}.json --platforms …\n" +
         "（无需 API Key）。网页/终端全自动生成请加 --local-llm 并配置 data/settings.json。",
     );
   }

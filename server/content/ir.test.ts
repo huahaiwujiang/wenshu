@@ -23,6 +23,18 @@ describe("parseArticleIR", () => {
     assert.equal(ir.schemaVersion, 1);
   });
 
+  it("keeps long titles unchanged", () => {
+    const longTitle = "字".repeat(30);
+    const ir = parseArticleIR(
+      JSON.stringify({
+        title: longTitle,
+        sections: [{ heading: "一", paragraphs: ["p"] }],
+      }),
+      FALLBACK,
+    );
+    assert.equal(ir.title.length, 30);
+  });
+
   it("truncates digest to 54 chars", () => {
     const long = "字".repeat(80);
     const ir = parseArticleIR(
@@ -68,5 +80,36 @@ describe("renderPlatform", () => {
     const xhs = renderPlatform("xiaohongshu", ir);
     assert.equal(xhs.filenameSuffix, "xhs");
     assert.match(xhs.content, /渲染测试/);
+
+    const carousel = renderPlatform("carousel", ir);
+    assert.equal(carousel.filenameSuffix, "carousel");
+    assert.match(carousel.content, /渲染测试/);
+  });
+
+  it("carousel omits image markers and keeps editorial copy", () => {
+    const ir = parseArticleIR(
+      JSON.stringify({
+        title: "贴图测试",
+        digest: "一句话摘要",
+        hooks: { opening: "Alpha 版又迭代了，这次会话体验是主线。", closing: "升级前建议备份。" },
+        sections: [
+          {
+            heading: "新增：会话与子代理",
+            paragraphs: [
+              "【配图：a.png】",
+              "会话流支持折叠过程、拖拽宽度，子代理可选模型与推理力度。",
+              "第二句补充：ACP 与 Windows x64 SDK 也在这版补齐。",
+            ],
+          },
+        ],
+        tags: ["tag1"],
+      }),
+      FALLBACK,
+    );
+    const out = renderPlatform("carousel", ir).content;
+    assert.doesNotMatch(out, /【配图/);
+    assert.match(out, /会话流支持折叠过程/);
+    assert.match(out, /ACP 与 Windows x64 SDK/);
+    assert.match(out, /新增：会话与子代理/);
   });
 });

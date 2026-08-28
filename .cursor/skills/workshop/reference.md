@@ -15,7 +15,7 @@ Base URL 默认：`http://127.0.0.1:8787`（环境变量 `WENSHU_PORT` 可改端
 | topic | string | 话题；空则随机热搜 |
 | referenceUrls | string | 参考 URL，逗号/换行分隔 |
 | referenceRatio | number | 0~1 借鉴比例 |
-| platforms | string[] | wechat / xiaohongshu / script / markdown / txt |
+| platforms | string[] | wechat / carousel / xiaohongshu / script / markdown / txt |
 | autoSearch | boolean | 无链接时是否检索 |
 | templateId | string | 微信 HTML 模板 id |
 
@@ -55,12 +55,13 @@ SSE 事件：
 output/article/
   {slug}.json           # IR 真源
   {slug}.wechat.html    # 平台 ID: wechat
+  {slug}.carousel.txt   # 贴图配文（信息总结，不含文件名）
   {slug}.xhs.txt        # 平台 ID: xiaohongshu（文件名用 xhs）
   {slug}.script.txt     # 平台 ID: script
   {slug}.md             # 若启用 markdown
   {slug}.txt            # 若启用 txt
 ```
 
-平台 ID（CLI / API `platforms`）与文件名后缀对照：`wechat` → `.wechat.html`；`xiaohongshu`（CLI 可写 `xhs`）→ `.xhs.txt`；`script` → `.script.txt`。IR 内对应字段为 `xhsBeats`、`scriptBeats`。
+平台 ID（CLI / API `platforms`）与文件名后缀对照：`wechat` → `.wechat.html`；`carousel`（别名 `贴图`）→ `.carousel.txt`；`xiaohongshu`（CLI 可写 `xhs`）→ `.xhs.txt`；`script` → `.script.txt`。IR 内对应字段为 `xhsBeats`、`scriptBeats`。
 
 热搜源 `weixin`（公众号热榜，未接入）与渲染平台 `wechat` 是不同概念，勿互换。

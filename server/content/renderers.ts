@@ -114,6 +114,32 @@ export function renderMarkdown(ir: ArticleIR): string {
   return lines.join("\n").trim() + "\n";
 }
 
+export function renderCarousel(ir: ArticleIR): string {
+  const isImageMarker = (s: string) => /^【配图[：:]/.test(s.trim());
+
+  const lines = [ir.title, "", ir.digest, ""];
+
+  const opening = ir.hooks.opening?.trim();
+  if (opening && opening !== ir.digest) {
+    lines.push(opening, "");
+  }
+
+  for (const sec of ir.sections) {
+    const body = sec.paragraphs.map((p) => p.trim()).filter((p) => p && !isImageMarker(p));
+    if (sec.heading) lines.push(sec.heading, "");
+    if (body.length) lines.push(...body, "");
+  }
+
+  const closing = ir.hooks.closing?.trim();
+  if (closing) lines.push(closing, "");
+
+  if (ir.tags.length) {
+    lines.push("", ir.tags.map((t) => `#${t}`).join(" "));
+  }
+
+  return lines.join("\n").trim() + "\n";
+}
+
 export function renderTxt(ir: ArticleIR): string {
   return `${ir.title}\n\n${ir.digest}\n\n${plainBodyFromIR(ir)}\n`;
 }
@@ -126,6 +152,8 @@ export function renderPlatform(
   switch (platform) {
     case "wechat":
       return { content: renderWechatHtml(ir, options?.templateHtml), ext: "html", filenameSuffix: "wechat" };
+    case "carousel":
+      return { content: renderCarousel(ir), ext: "txt", filenameSuffix: "carousel" };
     case "xiaohongshu":
       return { content: renderXiaohongshu(ir), ext: "txt", filenameSuffix: "xhs" };
     case "script":

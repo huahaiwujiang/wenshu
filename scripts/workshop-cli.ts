@@ -2,39 +2,42 @@
  * 文枢创意工坊 CLI
  *
  * Agent 入口（无需 llm.api_key）：
- *   1. Agent 用对话内模型生成 IR JSON → 写入文件
- *   2. npx tsx scripts/workshop-cli.ts --ir-file .cursor/workshop-ir.json --platforms wechat
+ *   1. Agent 写 IR → output/article/{slug}.json（唯一真源）
+ *   2. npx tsx scripts/workshop-cli.ts --ir-file output/article/{slug}.json --platforms wechat
  *
  * 网页同等全自动（需 data/settings.json 里 llm.api_key）：
  *   npx tsx scripts/workshop-cli.ts --local-llm --topic "..."
  */
 
-import fs from "node:fs/promises";
 import { runWorkshopGenerate, type GenerateInput } from "../server/workshop.js";
 import type { PlatformId } from "../server/content/ir.js";
 
-const PLATFORMS = new Set<PlatformId>(["wechat", "xiaohongshu", "script", "markdown", "txt"]);
-const DEFAULT_IR_PATH = ".cursor/workshop-ir.json";
+const PLATFORMS = new Set<PlatformId>(["wechat", "carousel", "xiaohongshu", "script", "markdown", "txt"]);
+
+const PLATFORM_ALIASES: Record<string, PlatformId> = {
+  xhs: "xiaohongshu",
+  贴图: "carousel",
+};
 
 function usage(): string {
   return `文枢创意工坊 CLI
 
 Agent 模式（推荐，无需 API Key）：
-  1. Read server/workshop-prompts.ts，按人格写 IR → .cursor/workshop-ir.json
-  2. npx tsx scripts/workshop-cli.ts --ir-file ${DEFAULT_IR_PATH} --platforms wechat
+  1. Read server/workshop-prompts.ts，按人格写 IR → output/article/{slug}.json
+  2. npx tsx scripts/workshop-cli.ts --ir-file output/article/{slug}.json --platforms wechat
 
 用法:
   npx tsx scripts/workshop-cli.ts [选项]
 
 选项:
-  --ir-file <path>            Agent 已生成的 IR JSON，只渲染落盘
+  --ir-file <path>            Agent 已写入的 IR（output/article/{slug}.json），渲染各平台变体
   --pick-topic-only           仅抽一条热搜选题（JSON 输出，无需 LLM）
   --local-llm                 走 data/settings.json 本地 LLM 全自动（网页同等）
   --topic <text>              话题
   --random-hot                先从热搜源选题（配合 --local-llm）
   --reference-urls <urls>     参考链接
   --reference-ratio <0-1>     借鉴比例
-  --platforms <list>          wechat,xiaohongshu,script,markdown,txt
+  --platforms <list>          wechat,carousel,xiaohongshu,script,markdown,txt（carousel 别名：贴图）
   --template-id <id>          微信模板 id
   --auto-search / --no-auto-search
   --json                      stdin JSON（可含 ir 对象或字段）
@@ -42,7 +45,7 @@ Agent 模式（推荐，无需 API Key）：
 
 示例:
   npx tsx scripts/workshop-cli.ts --pick-topic-only
-  npx tsx scripts/workshop-cli.ts --ir-file .cursor/workshop-ir.json --platforms wechat
+  npx tsx scripts/workshop-cli.ts --ir-file "output/article/我的标题.json" --platforms carousel
   npx tsx scripts/workshop-cli.ts --local-llm --topic "本地 AI 写作"
 `;
 }
@@ -53,7 +56,7 @@ function parsePlatforms(raw?: string): PlatformId[] | undefined {
     .split(/[,，\s]+/)
     .map((s) => s.trim())
     .filter(Boolean)
-    .map((s) => (s === "xhs" ? "xiaohongshu" : s)) as PlatformId[];
+    .map((s) => PLATFORM_ALIASES[s] ?? s) as PlatformId[];
   const bad = ids.filter((id) => !PLATFORMS.has(id));
   if (bad.length) throw new Error(`未知平台: ${bad.join(", ")}`);
   return ids;

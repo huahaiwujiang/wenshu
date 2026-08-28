@@ -35,7 +35,7 @@ export const DEFAULT_SETTINGS = {
     defaultTemplate: "simple-card",
     /** 方向 D：一稿多平台 */
     platforms: ["wechat", "xiaohongshu", "script"] as Array<
-      "wechat" | "xiaohongshu" | "script" | "markdown" | "txt"
+      "wechat" | "carousel" | "xiaohongshu" | "script" | "markdown" | "txt"
     >,
     /** 借鉴比例 0~1，仅在有参考链接/检索时生效 */
     referenceRatio: 0.35,

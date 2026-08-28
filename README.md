@@ -12,7 +12,7 @@
 5. **封面**：本地 `wechat-images` 或 Picsum → 微信草稿  
 6. **编辑**：文章可改；IR 可「保存并重渲染」各平台变体  
 
-落盘示例：`标题.json` + `标题.wechat.html` + `标题.xhs.txt` + `标题.script.txt`（平台 ID `xiaohongshu` 对应文件名后缀 `xhs`）
+落盘示例：`标题.json`（IR 真源）+ `标题.wechat.html` / `标题.carousel.txt`（贴图）/ `标题.xhs.txt` / `标题.script.txt`
 
 ## 双入口
 
@@ -42,7 +42,8 @@ Agent 配置见 [AGENTS.md](./AGENTS.md)。Agent 用对话内模型写 IR，**�
 CLI 落盘：
 
 ```bash
-npx tsx scripts/workshop-cli.ts --ir-file .cursor/workshop-ir.json --platforms wechat
+npx tsx scripts/workshop-cli.ts --ir-file "output/article/标题.json" --platforms wechat
+npx tsx scripts/workshop-cli.ts --ir-file "output/article/标题.json" --platforms carousel   # 公众号贴图
 npx tsx scripts/workshop-cli.ts --local-llm --topic "话题"   # 网页同等，需 api_key
 ```
 

@@ -156,21 +156,36 @@ export async function writeArticleContent(name: string, content: string): Promis
   await fs.writeFile(full, content, "utf-8");
 }
 
+export function slugFromArticleIrPath(irFile: string): string | undefined {
+  const resolved = path.resolve(irFile);
+  const articlesDir = path.resolve(ARTICLES_DIR);
+  if (resolved !== articlesDir && !resolved.startsWith(articlesDir + path.sep)) return undefined;
+  const base = path.basename(resolved);
+  if (!/\.json$/i.test(base)) return undefined;
+  return base.replace(/\.json$/i, "");
+}
+
 export async function writeArticlePackage(
   ir: ArticleIR,
   variants: Array<{ platform: PlatformId; filename: string; content: string }>,
+  options?: { slug?: string },
 ): Promise<{ slug: string; irFile: string; variants: string[] }> {
   await ensureDataDirs();
-  let base = safeFileName(ir.title);
-  let slug = base;
-  let i = 1;
-  while (true) {
-    try {
-      await fs.access(path.join(ARTICLES_DIR, `${slug}.json`));
-      slug = `${base}-${i}`;
-      i += 1;
-    } catch {
-      break;
+  let slug: string;
+  if (options?.slug) {
+    slug = options.slug;
+  } else {
+    let base = safeFileName(ir.title);
+    slug = base;
+    let i = 1;
+    while (true) {
+      try {
+        await fs.access(path.join(ARTICLES_DIR, `${slug}.json`));
+        slug = `${base}-${i}`;
+        i += 1;
+      } catch {
+        break;
+      }
     }
   }
 
