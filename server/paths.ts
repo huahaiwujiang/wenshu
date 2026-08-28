@@ -55,6 +55,15 @@ export const DEFAULT_SETTINGS = {
     weixin: false,
     twitter: false,
   },
+  /** Agent / CLI 双入口偏好（网页入口不受影响） */
+  agent: {
+    /** 为 true 时，协作 Agent 应走创意工坊而非对话内直接写稿 */
+    requireWorkshopFlow: true,
+    /** HTTP API 基址（Web 服务启动后） */
+    apiBase: "http://127.0.0.1:8787",
+    /** 默认入口：cli 无需启动 Web；api 需 npm run dev / npm start */
+    preferredEntry: "cli" as "cli" | "api",
+  },
 };
 
 export type Settings = typeof DEFAULT_SETTINGS;

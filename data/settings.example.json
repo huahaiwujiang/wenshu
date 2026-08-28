@@ -30,5 +30,10 @@
     "bilibili": true,
     "weixin": false,
     "twitter": false
+  },
+  "agent": {
+    "requireWorkshopFlow": true,
+    "apiBase": "http://127.0.0.1:8787",
+    "preferredEntry": "cli"
   }
 }

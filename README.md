@@ -5,7 +5,7 @@
 
 ## 能力概览（v0.2）
 
-1. **选题**：热搜（含 B站）或手填话题  
+1. **选题**：热搜（留空或 `--random-hot`）或手填话题（`--topic` / positional）  
 2. **素材**：参考 URL 借鉴 / 自动检索摘要  
 3. **IR 中间表示**：结构化 JSON 真源  
 4. **方向 D 多平台渲染**：微信 HTML、小红书文案、口播稿；可选另存 Markdown / TXT  
@@ -13,6 +13,31 @@
 6. **编辑**：文章可改；IR 可「保存并重渲染」各平台变体  
 
 落盘示例：`标题.json` + `标题.wechat.html` + `标题.xhs.txt` + `标题.script.txt`
+
+## 双入口
+
+| 入口 | 用法 |
+|------|------|
+| **斜杠命令** | Cursor：`/workshop 话题，要微信和小红书` · Claude Code：同上 |
+| **网页** | `npm run dev` → http://127.0.0.1:5173 创意工坊 |
+
+示例：
+
+```
+/workshop AI 提效，微信+小红书+口播     ← 自选话题
+/workshop 随机热搜                       ← 当前热门
+/workshop                                ← 留空 = 随机热搜
+/workshop 参考 https://example.com/a 写本地 LLM，借鉴 30%
+```
+
+Agent 配置见 [AGENTS.md](./AGENTS.md) 与 `.cursor/skills/workshop/`。
+
+CLI 等价命令：
+
+```bash
+npm run workshop -- "话题标题"
+npm run workshop -- --random-hot
+```
 
 ## 启动
 
@@ -37,3 +62,5 @@ npm run dev
 - `workshop.format`：额外 raw（html / markdown / txt）
 - `workshop.coverMode`：local | picsum | none
 - `hotSources`：热搜源开关（含 bilibili）
+- `agent.requireWorkshopFlow`：协作 Agent 是否必须走创意工坊（默认 true）
+- `agent.preferredEntry`：`cli`（`npm run workshop`）或 `api`（HTTP）
