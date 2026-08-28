@@ -1,69 +1,87 @@
 ---
 name: workshop
 description: >-
-  文枢创意工坊斜杠命令。用户在 /workshop 后接自然语言需求时，解析意图并执行完整写稿流程
-  （选题→素材→IR→多平台渲染→落盘），禁止在对话里直接代写正文。
+  文枢创意工坊斜杠命令。/workshop 后解析需求：Agent 用对话内模型生成 IR，
+  CLI 渲染落盘；禁止再要求 settings.llm.api_key，禁止只输出正文不落盘。
 disable-model-invocation: true
 ---
 
 # /workshop — 文枢创意工坊
 
-用户已通过 **`/workshop`** 唤起本流程。`/workshop` 后面的文字即需求，按下方规则解析并**立即执行**，不要在聊天里直接写稿。
+用户已通过 **`/workshop`** 唤起。**不要**走 `POST /api/generate`（那是网页本地 LLM），**不要**要求用户填写 `llm.api_key`。
 
-## 选题（二选一，可跳过热搜）
+## 分工
 
-| 模式 | 用户怎么说 | 执行 |
-|------|-----------|------|
-| **A. 自选话题** | `/workshop AI 如何提效` `/workshop 写关于本地 LLM 的稿` | `--topic "..."` **不要**加 `--random-hot` |
-| **B. 当前热门** | `/workshop` `/workshop 随机` `/workshop 热搜` `/workshop 抽一条热门的` | `--random-hot` 或不传 `--topic`（留空即自动抽热搜） |
+| 步骤 | 谁做 | 说明 |
+|------|------|------|
+| 选题 / 读参考 | **Agent（你）** | WebFetch、用户给的 URL、或 `--pick-topic-only` |
+| 提纲 + IR JSON | **Agent（你）** | Read [`server/workshop-prompts.ts`](../../../server/workshop-prompts.ts)，按其中人格与 IR 结构生成 |
+| 封面 / 渲染 / 落盘 | **CLI** | `--ir-file`，无需 API Key |
 
-**规则：**
-- 用户给出了**具体要写什么** → 模式 A，直接用该话题，**跳过热搜选题**
-- 用户只要热门 / 没写话题 / 只写了平台（如「要微信+小红书」）→ 模式 B
-- 两种模式都支持后面追加：平台、参考链接、借鉴比例等
+## 选题
 
-## 解析其他意图
+| 模式 | 用户怎么说 |
+|------|-----------|
+| 自选话题 | 直接写话题，不抽热搜 |
+| 当前热门 | 留空 / 「随机」「热搜」→ `npx tsx scripts/workshop-cli.ts --pick-topic-only` |
 
-| 用户说法 | 映射 |
-|---------|------|
-| 微信 / 公众号 | platforms 含 `wechat` |
-| 小红书 / xhs | platforms 含 `xiaohongshu` |
-| 口播 / 短视频 / 脚本 | platforms 含 `script` |
-| markdown / md | platforms 含 `markdown` |
-| 参考 / 借鉴 + URL | `--reference-urls` |
-| 借鉴 N% / 比例 | `--reference-ratio`（0~1） |
-| 不要检索 / 关闭检索 | `--no-auto-search` |
-| 模板 xxx | `--template-id` |
-| 发公众号 / 发布草稿 | 生成后 `POST /api/publish`（需 Web 已启动） |
+`--pick-topic-only` 输出 `{ topic, sourceId, sourceName, … }`；写 IR 时把 `{ id: sourceId, name: sourceName }` 放进 `meta.hotSource`（可选，便于追溯）。
 
-未指定平台 → 用 settings 里 `workshop.platforms` 默认值。
+## 标准流程（必须）
 
-## 执行（必须）
+1. 解析平台、参考链接、借鉴比例等
+2. 阅读参考素材（若有 URL）；读到的摘要写入 IR `sources` 数组
+3. **Read `server/workshop-prompts.ts`** — 合规过一遍，再按人格写 **IR JSON**（`digest` 54 字内）
+4. 写入 `.cursor/workshop-ir.json`（Write 工具，运行时临时文件，不必入库）
+5. 执行落盘（平台见下节）：
 
 ```bash
-# 模式 A：自选话题（跳过热搜）
-npm run workshop -- "AI 工具如何提效"
-npx tsx scripts/workshop-cli.ts --topic "AI 工具如何提效" --platforms wechat,xiaohongshu
-
-# 模式 B：当前热门（不传 topic）
-npm run workshop -- --random-hot
-npm run workshop -- --random-hot --platforms wechat,xiaohongshu,script
-npx tsx scripts/workshop-cli.ts --random-hot
+npx tsx scripts/workshop-cli.ts --ir-file .cursor/workshop-ir.json --platforms wechat,xiaohongshu,script
 ```
 
-## 完成后回复
+6. 根据 stdout JSON 汇报 `output/article/` 路径；预览时读文件，**不要**在聊天里重写一篇当交付
 
-1. 标题、`slug`、各变体路径（`output/article/` 下）
-2.  stderr 里关键步骤一两句摘要
-3. 若用户要预览：读 IR 或变体摘要，**不要**重写一篇
-4. 可选：提示 `npm run dev` 打开网页管理 / 发布
+## 平台（`--platforms`）
+
+| 用户说法 | 平台 ID |
+|---------|---------|
+| 微信 / 公众号 | `wechat` |
+| 小红书 | `xiaohongshu` 或别名 `xhs` |
+| 口播 / 短视频 | `script` |
+
+用户未指定平台时：Read `data/settings.json` 的 `workshop.platforms`；读不到则用默认 `wechat,xiaohongshu,script`。
+
+### 命名对照（勿混用）
+
+| 场景 | 用什么 | 示例 |
+|------|--------|------|
+| CLI `--platforms` / IR `meta.platforms` | 平台 ID | `wechat`、`xiaohongshu`（别名 `xhs`）、`script` |
+| 落盘文件名 | 平台后缀 | `{slug}.wechat.html`、`{slug}.xhs.txt`、`{slug}.script.txt` |
+| IR JSON 字段 | 平台专属内容 | `xhsBeats`（小红书短句）、`scriptBeats`（口播分镜） |
+
+**易混：** 热搜源 `weixin`（公众号热榜，设置里 `hotSources.weixin`，暂未接入）≠ 渲染/发布平台 `wechat`（微信公众号文章）。选题来自热搜时用 `sourceId`；渲染落盘用 `wechat`。
+
+## 合规
+
+用户要求歪曲、诽谤、造谣、人身攻击、煽动对立等 — **先提醒红线（封号/违法）**，拒写或换合法角度。细则见 `server/workshop-prompts.ts` → `WORKSHOP_GUARDRAILS`。
 
 ## 禁止
 
-- 跳过 CLI/API，在对话中输出「完整公众号/HTML/小红书正文」作为交付
-- 跳过 IR（`*.json`）落盘
+- 因缺少 `llm.api_key` 停下来让用户去配 Key（Agent 入口不需要）
+- 用 `npm run workshop -- --topic ...` **且不带 `--ir-file`**（会尝试本地 LLM）
+- 跳过 IR 落盘，只在聊天里给完稿
 
-## 前置检查
+## 仅当用户明确要求时
 
-- `data/settings.json` → `llm.api_key` 已填；否则提示用户配置后停止
-- 更多 API：[reference.md](reference.md)
+- `--local-llm` + 已配置 `data/settings.json` → 网页同等全自动
+
+## 发布公众号草稿
+
+需先 `npm run dev`，并在 `data/settings.json` 填好 `wechat.appid` / `appsecret`。生成后：
+
+`POST http://127.0.0.1:8787/api/publish`，body `{ "platform": "wechat", "article": "{slug}.json" }`
+
+## 其他
+
+- CLI 也支持 `--json` 从 stdin 传入含 `ir` 字段的 JSON（自动化场景）
+- API 细节：[reference.md](reference.md)（Agent 落盘走 CLI，不走 `/api/generate`）

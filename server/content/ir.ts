@@ -97,7 +97,7 @@ export function parseArticleIR(raw: string, fallback: { topic: string; createdAt
     schemaVersion: 1,
     title,
     topic: String(parsed.topic || fallback.topic).trim() || fallback.topic,
-    digest: digest.slice(0, 120),
+    digest: digest.slice(0, 54),
     tags: Array.isArray(parsed.tags) ? parsed.tags.map((t: any) => String(t).trim()).filter(Boolean).slice(0, 12) : [],
     hooks: {
       opening: String(parsed.hooks?.opening || parsed.opening || "").trim(),

@@ -1,42 +1,49 @@
 /**
- * 文枢创意工坊 CLI — Agent / 终端双入口之一
- * 与 POST /api/generate 共用 runWorkshopGenerate，无需启动 Web 服务。
+ * 文枢创意工坊 CLI
  *
- * 用法:
- *   npm run workshop -- --topic "AI 工具如何提效"
- *   npm run workshop -- --random-hot
- *   npm run workshop -- --topic "某话题" --platforms wechat,xiaohongshu --reference-urls "https://..."
- *   echo '{"topic":"..."}' | npm run workshop -- --json
+ * Agent 入口（无需 llm.api_key）：
+ *   1. Agent 用对话内模型生成 IR JSON → 写入文件
+ *   2. npx tsx scripts/workshop-cli.ts --ir-file .cursor/workshop-ir.json --platforms wechat
+ *
+ * 网页同等全自动（需 data/settings.json 里 llm.api_key）：
+ *   npx tsx scripts/workshop-cli.ts --local-llm --topic "..."
  */
 
+import fs from "node:fs/promises";
 import { runWorkshopGenerate, type GenerateInput } from "../server/workshop.js";
 import type { PlatformId } from "../server/content/ir.js";
 
 const PLATFORMS = new Set<PlatformId>(["wechat", "xiaohongshu", "script", "markdown", "txt"]);
+const DEFAULT_IR_PATH = ".cursor/workshop-ir.json";
 
 function usage(): string {
   return `文枢创意工坊 CLI
 
+Agent 模式（推荐，无需 API Key）：
+  1. Read server/workshop-prompts.ts，按人格写 IR → .cursor/workshop-ir.json
+  2. npx tsx scripts/workshop-cli.ts --ir-file ${DEFAULT_IR_PATH} --platforms wechat
+
 用法:
-  npm run workshop -- [选项]
-  npm run workshop -- "话题标题"          # positional 简写
-  npx tsx scripts/workshop-cli.ts "话题"  # 同上
+  npx tsx scripts/workshop-cli.ts [选项]
 
 选项:
-  --topic <text>              话题（留空且加 --random-hot 则从热搜抽取）
-  --random-hot                先从已启用热搜源随机选题
-  --reference-urls <urls>     参考链接，逗号/空格/换行分隔
-  --reference-ratio <0-1>     借鉴比例，默认读 settings.json
+  --ir-file <path>            Agent 已生成的 IR JSON，只渲染落盘
+  --pick-topic-only           仅抽一条热搜选题（JSON 输出，无需 LLM）
+  --local-llm                 走 data/settings.json 本地 LLM 全自动（网页同等）
+  --topic <text>              话题
+  --random-hot                先从热搜源选题（配合 --local-llm）
+  --reference-urls <urls>     参考链接
+  --reference-ratio <0-1>     借鉴比例
   --platforms <list>          wechat,xiaohongshu,script,markdown,txt
-  --template-id <id>          微信 HTML 模板 id
-  --auto-search               无链接时自动检索（覆盖 settings）
-  --no-auto-search            关闭自动检索
-  --json                      从 stdin 读 JSON（字段同 GenerateInput）
-  --help                      显示帮助
+  --template-id <id>          微信模板 id
+  --auto-search / --no-auto-search
+  --json                      stdin JSON（可含 ir 对象或字段）
+  --help
 
 示例:
-  npm run workshop -- --random-hot
-  npm run workshop -- --topic "本地 AI 写作" --platforms wechat,xhs,script
+  npx tsx scripts/workshop-cli.ts --pick-topic-only
+  npx tsx scripts/workshop-cli.ts --ir-file .cursor/workshop-ir.json --platforms wechat
+  npx tsx scripts/workshop-cli.ts --local-llm --topic "本地 AI 写作"
 `;
 }
 
@@ -52,8 +59,14 @@ function parsePlatforms(raw?: string): PlatformId[] | undefined {
   return ids;
 }
 
-function parseArgs(argv: string[]): GenerateInput & { randomHot?: boolean; jsonStdin?: boolean } {
-  const out: GenerateInput & { randomHot?: boolean; jsonStdin?: boolean } = {};
+type CliFlags = GenerateInput & {
+  randomHot?: boolean;
+  jsonStdin?: boolean;
+  pickTopicOnly?: boolean;
+};
+
+function parseArgs(argv: string[]): CliFlags {
+  const out: CliFlags = {};
   const positional: string[] = [];
 
   for (let i = 0; i < argv.length; i++) {
@@ -67,6 +80,15 @@ function parseArgs(argv: string[]): GenerateInput & { randomHot?: boolean; jsonS
       case "-h":
         console.log(usage());
         process.exit(0);
+      case "--ir-file":
+        out.irFile = argv[++i];
+        break;
+      case "--pick-topic-only":
+        out.pickTopicOnly = true;
+        break;
+      case "--local-llm":
+        out.localLlm = true;
+        break;
       case "--topic":
         out.topic = argv[++i];
         break;
@@ -115,16 +137,27 @@ async function readStdinJson(): Promise<Partial<GenerateInput>> {
 
 async function main(): Promise<void> {
   const parsed = parseArgs(process.argv.slice(2));
+
+  if (parsed.pickTopicOnly) {
+    const { pickRandomHotTopic } = await import("../server/hot/index.js");
+    const picked = await pickRandomHotTopic();
+    process.stdout.write(JSON.stringify(picked, null, 2) + "\n");
+    return;
+  }
+
   let input: GenerateInput = parsed;
 
   if (parsed.jsonStdin) {
     const fromStdin = await readStdinJson();
     input = { ...fromStdin, ...parsed };
   }
-  delete (input as any).randomHot;
-  delete (input as any).jsonStdin;
 
-  if (parsed.randomHot && !input.topic?.trim()) {
+  const randomHot = parsed.randomHot;
+  delete (input as CliFlags).randomHot;
+  delete (input as CliFlags).jsonStdin;
+  delete (input as CliFlags).pickTopicOnly;
+
+  if (randomHot && !input.topic?.trim() && !input.ir && !input.irFile) {
     const { pickRandomHotTopic } = await import("../server/hot/index.js");
     const picked = await pickRandomHotTopic();
     input.topic = picked.topic;
@@ -135,7 +168,6 @@ async function main(): Promise<void> {
     console.error(`[${level}] ${message}`);
   });
 
-  // stdout 仅 JSON，便于 Agent 解析
   process.stdout.write(JSON.stringify(result, null, 2) + "\n");
 }
 

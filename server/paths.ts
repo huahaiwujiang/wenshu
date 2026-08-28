@@ -11,7 +11,6 @@ export const OUTPUT_DIR = path.join(ROOT, "output");
 export const ARTICLES_DIR = path.join(OUTPUT_DIR, "article");
 export const WECHAT_IMAGES_DIR = path.join(OUTPUT_DIR, "wechat-images");
 export const TEMPLATES_DIR = path.join(DATA_DIR, "templates");
-export const NOVELS_DIR = path.join(DATA_DIR, "novels");
 export const SETTINGS_PATH = path.join(DATA_DIR, "settings.json");
 export const PUBLISH_RECORDS_PATH = path.join(DATA_DIR, "publish-records.json");
 export const WEB_DIST = path.join(ROOT, "web", "dist");
@@ -55,14 +54,14 @@ export const DEFAULT_SETTINGS = {
     weixin: false,
     twitter: false,
   },
-  /** Agent / CLI 双入口偏好（网页入口不受影响） */
+  /**
+   * Agent 协作偏好（供人工/Agent 阅读；服务端不读取，见 AGENTS.md / SKILL.md）
+   */
   agent: {
-    /** 为 true 时，协作 Agent 应走创意工坊而非对话内直接写稿 */
+    /** 协作 Agent 应走创意工坊（IR + CLI 落盘），而非只在对话里给完稿 */
     requireWorkshopFlow: true,
-    /** HTTP API 基址（Web 服务启动后） */
-    apiBase: "http://127.0.0.1:8787",
-    /** 默认入口：cli 无需启动 Web；api 需 npm run dev / npm start */
-    preferredEntry: "cli" as "cli" | "api",
+    /** false = 对话内写 IR（推荐）；true = 仅当用户明确要求时用 --local-llm */
+    useLocalLlm: false,
   },
 };
 

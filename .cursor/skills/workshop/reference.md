@@ -2,9 +2,11 @@
 
 Base URL 默认：`http://127.0.0.1:8787`（环境变量 `WENSHU_PORT` 可改端口）
 
+> **Agent `/workshop` 入口不走本节生成 API**，而是对话内写 IR + CLI `--ir-file` 落盘。以下供网页创意工坊或 `--local-llm` 参考。
+
 ## 生成
 
-`POST /api/generate` — SSE 流
+`POST /api/generate` — SSE 流（需 `data/settings.json` 里 `llm.api_key`）
 
 请求体字段（均可选，缺省读 `data/settings.json`）：
 
@@ -52,9 +54,13 @@ SSE 事件：
 ```
 output/article/
   {slug}.json           # IR 真源
-  {slug}.wechat.html
-  {slug}.xhs.txt
-  {slug}.script.txt
+  {slug}.wechat.html    # 平台 ID: wechat
+  {slug}.xhs.txt        # 平台 ID: xiaohongshu（文件名用 xhs）
+  {slug}.script.txt     # 平台 ID: script
   {slug}.md             # 若启用 markdown
   {slug}.txt            # 若启用 txt
 ```
+
+平台 ID（CLI / API `platforms`）与文件名后缀对照：`wechat` → `.wechat.html`；`xiaohongshu`（CLI 可写 `xhs`）→ `.xhs.txt`；`script` → `.script.txt`。IR 内对应字段为 `xhsBeats`、`scriptBeats`。
+
+热搜源 `weixin`（公众号热榜，未接入）与渲染平台 `wechat` 是不同概念，勿互换。

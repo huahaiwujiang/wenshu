@@ -12,7 +12,7 @@
 5. **封面**：本地 `wechat-images` 或 Picsum → 微信草稿  
 6. **编辑**：文章可改；IR 可「保存并重渲染」各平台变体  
 
-落盘示例：`标题.json` + `标题.wechat.html` + `标题.xhs.txt` + `标题.script.txt`
+落盘示例：`标题.json` + `标题.wechat.html` + `标题.xhs.txt` + `标题.script.txt`（平台 ID `xiaohongshu` 对应文件名后缀 `xhs`）
 
 ## 双入口
 
@@ -21,22 +21,29 @@
 | **斜杠命令** | Cursor：`/workshop 话题，要微信和小红书` · Claude Code：同上 |
 | **网页** | `npm run dev` → http://127.0.0.1:5173 创意工坊 |
 
-示例：
+示例（默认 Agent 流程，无需 api_key）：
 
 ```
 /workshop AI 提效，微信+小红书+口播     ← 自选话题
 /workshop 随机热搜                       ← 当前热门
 /workshop                                ← 留空 = 随机热搜
-/workshop 参考 https://example.com/a 写本地 LLM，借鉴 30%
+/workshop 参考 https://example.com/a，借鉴 30%，要微信
 ```
 
-Agent 配置见 [AGENTS.md](./AGENTS.md) 与 `.cursor/skills/workshop/`。
-
-CLI 等价命令：
+进阶（仅当用户明确要求「本地 LLM / 网页同等全自动」，且已配置 `data/settings.json` 的 `llm.api_key`）：
 
 ```bash
-npm run workshop -- "话题标题"
-npm run workshop -- --random-hot
+npx tsx scripts/workshop-cli.ts --local-llm --topic "话题" \
+  --reference-urls "https://example.com/a" --reference-ratio 0.3
+```
+
+Agent 配置见 [AGENTS.md](./AGENTS.md)。Agent 用对话内模型写 IR，**无需** `llm.api_key`；网页工坊才需要。
+
+CLI 落盘：
+
+```bash
+npx tsx scripts/workshop-cli.ts --ir-file .cursor/workshop-ir.json --platforms wechat
+npx tsx scripts/workshop-cli.ts --local-llm --topic "话题"   # 网页同等，需 api_key
 ```
 
 ## 启动
@@ -62,5 +69,4 @@ npm run dev
 - `workshop.format`：额外 raw（html / markdown / txt）
 - `workshop.coverMode`：local | picsum | none
 - `hotSources`：热搜源开关（含 bilibili）
-- `agent.requireWorkshopFlow`：协作 Agent 是否必须走创意工坊（默认 true）
-- `agent.preferredEntry`：`cli`（`npm run workshop`）或 `api`（HTTP）
+- `agent.requireWorkshopFlow` / `agent.useLocalLlm`：Agent 协作偏好（见 [AGENTS.md](./AGENTS.md)，服务端不读取）

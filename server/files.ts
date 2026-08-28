@@ -5,7 +5,6 @@ import {
   ARTICLES_DIR,
   DATA_DIR,
   DEFAULT_SETTINGS,
-  NOVELS_DIR,
   OUTPUT_DIR,
   PUBLISH_RECORDS_PATH,
   SETTINGS_PATH,
@@ -19,7 +18,6 @@ export async function ensureDataDirs(): Promise<void> {
   await fs.mkdir(ARTICLES_DIR, { recursive: true });
   await fs.mkdir(WECHAT_IMAGES_DIR, { recursive: true });
   await fs.mkdir(TEMPLATES_DIR, { recursive: true });
-  await fs.mkdir(NOVELS_DIR, { recursive: true });
   try {
     await fs.access(SETTINGS_PATH);
   } catch {
@@ -51,9 +49,10 @@ export async function readSettings(): Promise<Settings> {
   return deepMerge(DEFAULT_SETTINGS, parsed);
 }
 
-export async function writeSettings(next: Settings): Promise<Settings> {
+export async function writeSettings(next: Partial<Settings>): Promise<Settings> {
   await ensureDataDirs();
-  const merged = deepMerge(DEFAULT_SETTINGS, next);
+  const existing = await readSettings();
+  const merged = deepMerge(existing, next);
   await fs.writeFile(SETTINGS_PATH, JSON.stringify(merged, null, 2), "utf-8");
   return merged;
 }

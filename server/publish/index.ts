@@ -226,16 +226,7 @@ export const xiaohongshuPublisher: Publisher = {
   },
 };
 
-export const zhihuPublisher: Publisher = {
-  id: "zhihu",
-  name: "知乎",
-  implemented: false,
-  async publish(): Promise<PublishResult> {
-    return { ok: false, platform: "zhihu", message: "知乎发布尚未接入" };
-  },
-};
-
-export const PUBLISHERS: Publisher[] = [wechatPublisher, xiaohongshuPublisher, zhihuPublisher];
+export const PUBLISHERS: Publisher[] = [wechatPublisher, xiaohongshuPublisher];
 
 const pubById = new Map(PUBLISHERS.map((p) => [p.id, p]));
 
