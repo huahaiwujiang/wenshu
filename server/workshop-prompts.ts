@@ -25,21 +25,21 @@ export const WRITING_STANDARDS = `写稿标准（所有平台模式必须遵守 
 - digest：54 字内，像人工写的摘要，不重复标题
 - 禁止：水田话、空喊口号、标题党、无来源硬编、列表式搬运 Release 条目`;
 
-export const CAROUSEL_IR_GUIDE = `公众号贴图模式（--platforms carousel）：配图是信息载体，carousel.txt 是**贴图配文**——读者刷图前/图间读的文字导读与总结，必须有信息增量。
+export const CAROUSEL_IR_GUIDE = `公众号贴图模式（--platforms carousel）：**详情在图里**，carousel.txt 只做极简导读。图里已写的条目、说明，配文里不要再写一遍——重复没有意义。
 
-写什么：
-- 先读用户给的参考链接（Release/文档）或理解配图内容，再动笔
-- hooks.opening：1～2 句完整话，交代背景或读者为什么要看，像编辑导语
-- sections：每张图对应一节。heading=主题；paragraphs=1～3 句**自然的信息总结**，读出来像人写的
-- hooks.closing：一句收束 + 可留官方链接
-- digest：整组贴图的价值主张，54 字内
+写什么（宜短）：
+- 先读参考链接或理解配图，再动笔；图片另存 output/wechat-images/，与文字分开
+- digest：一句价值主张，54 字内
+- hooks.opening：≤40 字，点题即可（可空）
+- sections：每张图一节。heading=短主题；paragraphs **仅 1 句点题（≤30 字）**——只说「这张图讲什么」，不展开、不列点
+- hooks.closing：≤40 字收束，可另附官方链接
 
 禁止写什么：
-- 禁止在 paragraphs 里写【配图：xxx.png】、禁止罗列文件名——那是制作流程，不是读者该看的配文
-- 禁止只写「详见上图」「如图所示」等空洞句
-- 禁止把 Release 条目原样抄成列表；要总结、要角度、要让人读懂为什么重要
+- 禁止复述图内清单或长段总结（那些已经在图上）
+- 禁止【配图：xxx.png】、禁止「详见上图」「如图所示」等空话
+- 禁止把 Release 条目抄进配文
 
-图片文件由制作者另存 output/wechat-images/，与 IR 文字分开；carousel 渲染器只输出可读配文。`;
+carousel 渲染器只输出可读短配文，并截断过长段落。`;
 
 export const IR_JSON_SCHEMA = `{
   "title": "标题，抓眼球，正文须兑现",

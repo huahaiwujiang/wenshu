@@ -86,19 +86,22 @@ describe("renderPlatform", () => {
     assert.match(carousel.content, /渲染测试/);
   });
 
-  it("carousel omits image markers and keeps editorial copy", () => {
+  it("carousel omits image markers and keeps only a short caption per slide", () => {
     const ir = parseArticleIR(
       JSON.stringify({
         title: "贴图测试",
         digest: "一句话摘要",
-        hooks: { opening: "Alpha 版又迭代了，这次会话体验是主线。", closing: "升级前建议备份。" },
+        hooks: {
+          opening: "Alpha 版又迭代了，这次会话体验是主线，后面还有很多细节可以慢慢展开给读者看。",
+          closing: "升级前建议备份。https://example.com/r",
+        },
         sections: [
           {
             heading: "新增：会话与子代理",
             paragraphs: [
               "【配图：a.png】",
-              "会话流支持折叠过程、拖拽宽度，子代理可选模型与推理力度。",
-              "第二句补充：ACP 与 Windows x64 SDK 也在这版补齐。",
+              "会话体验是这版主线。",
+              "第二句补充：ACP 与 Windows x64 SDK 也在这版补齐，配文不应再输出。",
             ],
           },
         ],
@@ -108,8 +111,12 @@ describe("renderPlatform", () => {
     );
     const out = renderPlatform("carousel", ir).content;
     assert.doesNotMatch(out, /【配图/);
-    assert.match(out, /会话流支持折叠过程/);
-    assert.match(out, /ACP 与 Windows x64 SDK/);
     assert.match(out, /新增：会话与子代理/);
+    assert.match(out, /会话体验是这版主线/);
+    assert.doesNotMatch(out, /ACP 与 Windows x64 SDK/);
+    assert.doesNotMatch(out, /给读者看/);
+    assert.match(out, /…/);
+    assert.match(out, /升级前建议备份/);
+    assert.match(out, /https:\/\/example\.com\/r/);
   });
 });

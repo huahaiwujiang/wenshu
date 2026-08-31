@@ -114,24 +114,47 @@ export function renderMarkdown(ir: ArticleIR): string {
   return lines.join("\n").trim() + "\n";
 }
 
+/** 贴图配文：详情在图，文字宜短；渲染时截断过长段落 */
+const CAROUSEL_OPENING_MAX = 40;
+const CAROUSEL_CAPTION_MAX = 30;
+const CAROUSEL_CLOSING_MAX = 40;
+
+function clipCarouselLine(text: string, max: number): string {
+  const t = text.trim();
+  if (t.length <= max) return t;
+  return `${t.slice(0, Math.max(0, max - 1)).trimEnd()}…`;
+}
+
 export function renderCarousel(ir: ArticleIR): string {
   const isImageMarker = (s: string) => /^【配图[：:]/.test(s.trim());
+  /** 收束句可附带链接：链接本身不计入字数截断 */
+  const splitClosing = (raw: string): { lead: string; url?: string } => {
+    const m = raw.trim().match(/^(.*?)(https?:\/\/\S+)\s*$/s);
+    if (!m) return { lead: raw.trim() };
+    return { lead: m[1].trim(), url: m[2] };
+  };
 
   const lines = [ir.title, "", ir.digest, ""];
 
   const opening = ir.hooks.opening?.trim();
   if (opening && opening !== ir.digest) {
-    lines.push(opening, "");
+    lines.push(clipCarouselLine(opening, CAROUSEL_OPENING_MAX), "");
   }
 
   for (const sec of ir.sections) {
     const body = sec.paragraphs.map((p) => p.trim()).filter((p) => p && !isImageMarker(p));
     if (sec.heading) lines.push(sec.heading, "");
-    if (body.length) lines.push(...body, "");
+    // 每图只保留一句点题，不输出后续复述图内细节的长段
+    if (body[0]) lines.push(clipCarouselLine(body[0], CAROUSEL_CAPTION_MAX), "");
   }
 
-  const closing = ir.hooks.closing?.trim();
-  if (closing) lines.push(closing, "");
+  const closingRaw = ir.hooks.closing?.trim();
+  if (closingRaw) {
+    const { lead, url } = splitClosing(closingRaw);
+    if (lead) lines.push(clipCarouselLine(lead, CAROUSEL_CLOSING_MAX));
+    if (url) lines.push(url);
+    lines.push("");
+  }
 
   if (ir.tags.length) {
     lines.push("", ir.tags.map((t) => `#${t}`).join(" "));

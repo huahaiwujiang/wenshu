@@ -52,15 +52,15 @@ npx tsx scripts/workshop-cli.ts --ir-file "output/article/{slug}.json" --platfor
 | 用户说法 | 平台 ID | 产出 |
 |---------|---------|------|
 | 微信长文 / 公众号 HTML | `wechat` | `{slug}.wechat.html` |
-| 贴图 / 多图配文 | `carousel` 或 `贴图` | `{slug}.carousel.txt`（贴图配文：参考素材/配图的信息总结） |
+| 贴图 / 多图配文 | `carousel` 或 `贴图` | `{slug}.carousel.txt`（短配文：详情在图，文字只点题） |
 | 小红书 | `xiaohongshu` 或 `xhs` | `{slug}.xhs.txt` |
 | 口播 / 短视频 | `script` | `{slug}.script.txt` |
 
 **贴图模式**：`--platforms carousel`，**不要** `wechat`。必读 `CAROUSEL_IR_GUIDE`：
-- 先读 Release/参考链接或理解配图内容，再写 IR
-- `sections` 每节 = 一张图的主题 + 1～3 句**信息总结**（主编口吻，有角度）
-- **禁止**在 IR 里写 `【配图：xxx.png】`——那是制作流程，不是读者配文
-- 图片另存 `output/wechat-images/`，与文字分开
+- 先读 Release/参考链接或理解配图，再写 IR；**图里已有的内容，配文不要再写一遍**
+- `sections` 每节 = 一张图：短 heading + **1 句点题（≤30 字）**，不展开、不列点
+- opening ≤40 字；closing ≤40 字（可另附链接）
+- **禁止** `【配图：xxx.png】`；图片另存 `output/wechat-images/`
 
 用户未指定平台时：Read `data/settings.json` 的 `workshop.platforms`；读不到则默认 `wechat,xiaohongshu,script`。
 
