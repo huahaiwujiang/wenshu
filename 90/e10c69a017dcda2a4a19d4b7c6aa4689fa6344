@@ -1,0 +1,29 @@
+.cursor/skills/workshop/SKILL.md
+  292d7cfa052cd0ba 55,60-63
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "90e10c69a017dcda2a4a19d4b7c6aa4689fa6344",
+  "prompts": {
+    "292d7cfa052cd0ba": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "e3e49798-808e-46ee-bb19-79e21631611b",
+        "model": "default"
+      },
+      "human_author": "huahai",
+      "messages": [],
+      "total_additions": 5,
+      "total_deletions": 5,
+      "accepted_lines": 5,
+      "overriden_lines": 0,
+      "messages_url": "https://git-ai.hsjdata.com/cas/b380e0c77e620c2c49090dbbeaebbf36653fe6a2b95c712a00f21ea8ced1a58c"
+    }
+  },
+  "humans": {
+    "h_20193a38825318": {
+      "author": "huahai"
+    }
+  }
+}
