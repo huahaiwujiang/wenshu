@@ -114,10 +114,11 @@ export function renderMarkdown(ir: ArticleIR): string {
   return lines.join("\n").trim() + "\n";
 }
 
-/** 贴图配文：详情在图，文字宜短；渲染时截断过长段落 */
-const CAROUSEL_OPENING_MAX = 40;
-const CAROUSEL_CAPTION_MAX = 30;
-const CAROUSEL_CLOSING_MAX = 40;
+/** 贴图配文：提炼精华，每节 1～2 句；渲染时截断过长句 */
+const CAROUSEL_OPENING_MAX = 80;
+const CAROUSEL_PARAGRAPH_MAX = 100;
+const CAROUSEL_SECTION_PARAS_MAX = 2;
+const CAROUSEL_CLOSING_MAX = 80;
 
 function clipCarouselLine(text: string, max: number): string {
   const t = text.trim();
@@ -144,8 +145,9 @@ export function renderCarousel(ir: ArticleIR): string {
   for (const sec of ir.sections) {
     const body = sec.paragraphs.map((p) => p.trim()).filter((p) => p && !isImageMarker(p));
     if (sec.heading) lines.push(sec.heading, "");
-    // 每图只保留一句点题，不输出后续复述图内细节的长段
-    if (body[0]) lines.push(clipCarouselLine(body[0], CAROUSEL_CAPTION_MAX), "");
+    for (const p of body.slice(0, CAROUSEL_SECTION_PARAS_MAX)) {
+      lines.push(clipCarouselLine(p, CAROUSEL_PARAGRAPH_MAX), "");
+    }
   }
 
   const closingRaw = ir.hooks.closing?.trim();
