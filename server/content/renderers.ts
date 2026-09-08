@@ -135,10 +135,11 @@ export function renderCarousel(ir: ArticleIR): string {
     return { lead: m[1].trim(), url: m[2] };
   };
 
-  const lines = [ir.title, "", ir.digest, ""];
+  /** 公众号配文框没有标题/摘要栏；title、digest 留在 IR，不渲进 txt */
+  const lines: string[] = [];
 
   const opening = ir.hooks.opening?.trim();
-  if (opening && opening !== ir.digest) {
+  if (opening) {
     lines.push(clipCarouselLine(opening, CAROUSEL_OPENING_MAX), "");
   }
 

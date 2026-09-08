@@ -37,28 +37,30 @@ disable-model-invocation: true
 
 1. 解析平台、参考链接、借鉴比例等
 2. 阅读参考素材（若有 URL）；摘要写入 IR `sources`
-3. **Read `server/workshop-prompts.ts`** — 合规 + `WORKSHOP_PERSONA` + `WRITING_STANDARDS`（标题抓眼球；`digest` ≤54 字）
+3. **Read `server/workshop-prompts.ts`** — 合规 + `WORKSHOP_PERSONA` + `WRITING_STANDARDS` + `WORKSHOP_DESLOP`（标题抓眼球；`digest` ≤54 字）
 4. 计算 `slug`，**Write `output/article/{slug}.json`**（完整 IR，含 `schemaVersion: 1`、`meta.createdAt`）
-5. CLI 渲染变体：
+5. **去 AI（强制）**：Read [deslop.md](deslop.md)，按 Gate A→F 扫 IR 可读字段并写回同一 json；用户明示「不去 AI」可跳过并在汇报注明。借鉴自 web-novelist `story-deslop`（改味不改事实），**勿照搬网文情绪外化规则**
+6. CLI 渲染变体：
 
 ```bash
 npx tsx scripts/workshop-cli.ts --ir-file "output/article/{slug}.json" --platforms wechat,xiaohongshu,script
 ```
 
-6. 根据 stdout JSON 汇报路径；预览读 `output/article/` 下文件，**不要在聊天里重写一篇当交付**
+7. 根据 stdout JSON 汇报路径；预览读 `output/article/` 下文件，**不要在聊天里重写一篇当交付**
 
 ## 平台（`--platforms`）
 
 | 用户说法 | 平台 ID | 产出 |
 |---------|---------|------|
 | 微信长文 / 公众号 HTML | `wechat` | `{slug}.wechat.html` |
-| 贴图 / 多图配文 | `carousel` 或 `贴图` | `{slug}.carousel.txt`（精华总结：只看文字也能懂核心） |
+| 贴图 / 多图配文 | `carousel` 或 `贴图` | `{slug}.carousel.txt`（配文从 opening 起，不含 title/digest） |
 | 小红书 | `xiaohongshu` 或 `xhs` | `{slug}.xhs.txt` |
 | 口播 / 短视频 | `script` | `{slug}.script.txt` |
 
 **贴图模式**：`--platforms carousel`，**不要** `wechat`。必读 `CAROUSEL_IR_GUIDE`：
 - 先读参考素材（URL、长文、文案等）或理解配图，再写 IR
 - 图放细节；配文**提炼精华**——每图 1～2 句，至少点到 2 个具体信息，禁止「条目见图」等空话
+- `carousel.txt` 是公众号配文框纯文本：从 `hooks.opening` 起笔，**不要**把 `title`/`digest` 渲进去（配文没有标题栏/摘要头；那两字段留在 IR）
 - opening / closing ≤80 字（closing 可另附链接）
 - **禁止** `【配图：xxx.png】`；图片另存 `output/wechat-images/`
 
@@ -84,6 +86,7 @@ npx tsx scripts/workshop-cli.ts --ir-file "output/article/{slug}.json" --platfor
 - 因缺少 `llm.api_key` 停下来
 - `npm run workshop -- --topic ...` 且不带 `--ir-file`
 - 跳过落盘，只在聊天给完稿
+- 跳过去 AI 步骤直接渲染（用户明示跳过除外）
 
 ## 仅当用户明确要求时
 

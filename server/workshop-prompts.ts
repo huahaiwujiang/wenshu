@@ -23,9 +23,28 @@ export const WRITING_STANDARDS = `写稿标准（所有平台模式必须遵守 
 - 标题：抓眼球、能传播；正文须兑现（发布前用户可自行改标题）
 - 角度：说清楚谁受益、谁要改代码、和上一版差在哪
 - digest：54 字内，像人工写的摘要，不重复标题
-- 禁止：水田话、空喊口号、标题党、无来源硬编、列表式搬运 Release 条目`;
+- 禁止：水田话、空喊口号、标题党、无来源硬编、列表式搬运 Release 条目
+- 写完后必须再跑一遍 WORKSHOP_DESLOP（或 Agent 读 .cursor/skills/workshop/deslop.md），清套话后再交付`;
 
-export const CAROUSEL_IR_GUIDE = `公众号贴图模式（--platforms carousel）：配图承载细节（条目、图表、长文要点等），carousel.txt 是**精华总结**——读者只看文字也要能抓住核心信息。
+/**
+ * 去 AI 味（新媒体）：借鉴 web-novelist/story-deslop 的「改味不改事实、改最少」；
+ * 完整清单见 .cursor/skills/workshop/deslop.md。不照搬网文情绪外化规则。
+ */
+export const WORKSHOP_DESLOP = `写完 IR 可读字段后，交付前强制去 AI（用户明示跳过除外）：
+
+原则：只改说法不改事实；能删空话就不堆修辞；专有名词/版本号/链接/数据不动。
+
+六门速查：
+- A 套话：不是小修小补、扫一眼、干货满满、隐性亮点、N 条线一起推、赋能、开启新篇章
+- B 句式：不是 A 而是 B；既…又…更…连排；用 —— / …… 装节奏
+- C 自指：这版把…、值得一提、不得不说、总的来说、不难看出
+- D 电报体：缺主语的碎句连排、提纲腔
+- E 推卸：条目见图、如图所示、图里说清了、几张图够用
+- F 口号收束：值得每个…关注、助力每一位…
+
+修法：删或压成具体信息；贴图配文去完后仍须遮住图读得懂核心。完整对照表见 deslop.md。`;
+
+export const CAROUSEL_IR_GUIDE = `公众号贴图模式（--platforms carousel）：配图承载细节（条目、图表、长文要点等），carousel.txt 是**可直接粘进公众号配文框的纯文本**——无标题栏、无摘要头；读者只看这段字也要能抓住核心。
 
 参考素材不限于 Release，也可能是：长文/报告、产品文案、教程文档、用户给的 URL 或粘贴段落。先读懂素材或理解配图，再动笔；图片另存 output/wechat-images/，与文字分开。
 
@@ -33,9 +52,12 @@ export const CAROUSEL_IR_GUIDE = `公众号贴图模式（--platforms carousel�
 - 图：细节载体（完整清单、步骤、数据、原文要点），供细看
 - 文：编辑口吻**提炼精华**，归纳该图涵盖的信息；不逐条抄编号列表，但要点到具体名词、观点或事实
 
+渲染顺序（CLI 生成 carousel.txt）：hooks.opening → sections → hooks.closing → tags。
+title / digest 只写在 IR 里（slug、列表、其它平台用），**不要**当作配文开头再复述一遍。
+
 写什么：
-- digest：54 字内，写清全文最核心的 1～2 个信息点（要有具体名词/结论，不能空泛）
-- hooks.opening：一句背景或读者为什么要看，≤80 字
+- digest：54 字内，写清全文最核心的 1～2 个信息点（要有具体名词/结论，不能空泛）；不进入 carousel.txt
+- hooks.opening：配文第一句，背景或读者为什么要看，≤80 字
 - sections：每张图一节。heading=主题；paragraphs **1～2 句完整话（每句 ≤100 字，该节合计 ≤180 字）**
   - 至少提到 2 个与该图对应的**具体信息**（如功能、观点、步骤、数据、结论——随素材类型而定）
   - 用自然段，像主编帮读者读完原文后的口头总结
@@ -75,10 +97,13 @@ ${WORKSHOP_PERSONA}
 
 ${WRITING_STANDARDS}
 
+${WORKSHOP_DESLOP}
+
 只输出一个 JSON，不要 Markdown 围栏。结构：
 ${IR_JSON_SCHEMA}
 
-sections 至少3节，字数卡目标区间，表述原创，语气向阳。贴图模式必须另读并遵守 CAROUSEL_IR_GUIDE。`;
+sections 至少3节，字数卡目标区间，表述原创，语气向阳。贴图模式必须另读并遵守 CAROUSEL_IR_GUIDE。
+输出前用 WORKSHOP_DESLOP 自检一遍，清掉套话与空话后再给出最终 JSON。`;
 
 export function outlineUserPrompt(topic: string, minChars: number, maxChars: number, researchBlock: string): string {
   return `话题：${topic}\n字数：${minChars}～${maxChars}\n\n素材：\n${researchBlock}`;

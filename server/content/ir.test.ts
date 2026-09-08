@@ -83,7 +83,9 @@ describe("renderPlatform", () => {
 
     const carousel = renderPlatform("carousel", ir);
     assert.equal(carousel.filenameSuffix, "carousel");
-    assert.match(carousel.content, /渲染测试/);
+    assert.match(carousel.content, /正文/);
+    assert.doesNotMatch(carousel.content, /渲染测试/);
+    assert.doesNotMatch(carousel.content, /摘要/);
   });
 
   it("carousel omits image markers and outputs substantive section summaries", () => {
@@ -112,6 +114,9 @@ describe("renderPlatform", () => {
       FALLBACK,
     );
     const out = renderPlatform("carousel", ir).content;
+    assert.match(out, /^Alpha 版又迭代了/);
+    assert.doesNotMatch(out, /贴图测试/);
+    assert.doesNotMatch(out, /一句话摘要/);
     assert.doesNotMatch(out, /【配图/);
     assert.match(out, /体验优化/);
     assert.match(out, /长会话导航支持预览未载入轮次/);

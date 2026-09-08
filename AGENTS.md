@@ -9,7 +9,7 @@
 /workshop 随机热搜，贴图模式
 ```
 
-**分工（无需 `llm.api_key`）：** Read `server/workshop-prompts.ts` → Write `output/article/{slug}.json` → `--ir-file` CLI 渲染变体。
+**分工（无需 `llm.api_key`）：** Read `server/workshop-prompts.ts` → Write `output/article/{slug}.json` → Read `deslop.md` 去 AI 写回 → `--ir-file` CLI 渲染变体。
 
 | 工具 | 入口 |
 |------|------|

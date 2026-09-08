@@ -55,7 +55,7 @@ SSE 事件：
 output/article/
   {slug}.json           # IR 真源
   {slug}.wechat.html    # 平台 ID: wechat
-  {slug}.carousel.txt   # 贴图配文（信息总结，不含文件名）
+  {slug}.carousel.txt   # 贴图配文（从 opening 起的纯文本，不含 title/digest）
   {slug}.xhs.txt        # 平台 ID: xiaohongshu（文件名用 xhs）
   {slug}.script.txt     # 平台 ID: script
   {slug}.md             # 若启用 markdown
