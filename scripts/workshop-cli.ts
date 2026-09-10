@@ -37,7 +37,7 @@ Agent 模式（推荐，无需 API Key）：
   --random-hot                先从热搜源选题（配合 --local-llm）
   --reference-urls <urls>     参考链接
   --reference-ratio <0-1>     借鉴比例
-  --platforms <list>          wechat,carousel,xiaohongshu,script,markdown,txt（carousel 别名：贴图）
+  --platforms <list>          wechat,xiaohongshu,script,markdown,txt（carousel/贴图 = 只出图，不渲 txt）
   --template-id <id>          微信模板 id
   --auto-search / --no-auto-search
   --json                      stdin JSON（可含 ir 对象或字段）
@@ -45,7 +45,7 @@ Agent 模式（推荐，无需 API Key）：
 
 示例:
   npx tsx scripts/workshop-cli.ts --pick-topic-only
-  npx tsx scripts/workshop-cli.ts --ir-file "output/article/我的标题.json" --platforms carousel
+  npx tsx scripts/workshop-cli.ts --ir-file "output/article/我的标题.json" --platforms wechat
   npx tsx scripts/workshop-cli.ts --local-llm --topic "本地 AI 写作"
 `;
 }

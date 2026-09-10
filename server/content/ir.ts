@@ -44,7 +44,7 @@ export const PLATFORM_META: Record<
   { id: PlatformId; name: string; ext: string; description: string }
 > = {
   wechat: { id: "wechat", name: "微信公众号", ext: "html", description: "长文 HTML，套模板/内联样式" },
-  carousel: { id: "carousel", name: "公众号贴图", ext: "txt", description: "贴图配文：从 opening 起的纯文本，可直接粘进公众号配文框" },
+  carousel: { id: "carousel", name: "公众号贴图", ext: "txt", description: "只出图到 wechat-images，不生成配文" },
   xiaohongshu: { id: "xiaohongshu", name: "小红书", ext: "txt", description: "短结构 + emoji 节奏 + 话题标签" },
   script: { id: "script", name: "口播稿", ext: "txt", description: "短视频口播 + 分镜提示" },
   markdown: { id: "markdown", name: "Markdown", ext: "md", description: "通用 Markdown" },

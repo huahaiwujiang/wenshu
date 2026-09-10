@@ -1,18 +1,18 @@
 # 文枢
 
 本地 Node Web 写作台：创意工坊、文章管理、模板管理、系统设置。  
-无数据库：配置/模板在 `data/`，成稿与配图在 `output/article`、`output/wechat-images`。
+无数据库：配置/模板在 `data/`，可复用配图素材在 `data/assets/`（按主题分子文件夹），成稿与配图在 `output/article`、`output/wechat-images`。
 
 ## 能力概览（v0.2）
 
 1. **选题**：热搜（留空或 `--random-hot`）或手填话题（`--topic` / positional）  
-2. **素材**：参考 URL 借鉴 / 自动检索摘要  
+2. **素材**：`data/assets/{主题}/` 本地资源库 → 参考 URL 借鉴 / 自动检索摘要  
 3. **IR 中间表示**：结构化 JSON 真源  
-4. **方向 D 多平台渲染**：微信 HTML、小红书文案、口播稿；可选另存 Markdown / TXT  
+4. **方向 D 多平台渲染**：微信 HTML、小红书文案、口播稿；可选另存 Markdown / TXT。公众号贴图只出图（`output/wechat-images/`），无配文  
 5. **封面**：本地 `wechat-images` 或 Picsum → 微信草稿  
 6. **编辑**：文章可改；IR 可「保存并重渲染」各平台变体  
 
-落盘示例：`标题.json`（IR 真源）+ `标题.wechat.html` / `标题.carousel.txt`（贴图）/ `标题.xhs.txt` / `标题.script.txt`
+落盘示例：`标题.json`（IR 真源）+ `标题.wechat.html` / `标题.xhs.txt` / `标题.script.txt`；贴图 PNG 在 `output/wechat-images/`
 
 ## 双入口
 
@@ -43,7 +43,7 @@ CLI 落盘：
 
 ```bash
 npx tsx scripts/workshop-cli.ts --ir-file "output/article/标题.json" --platforms wechat
-npx tsx scripts/workshop-cli.ts --ir-file "output/article/标题.json" --platforms carousel   # 公众号贴图
+npx tsx scripts/workshop-cli.ts --ir-file "output/article/标题.json" --platforms wechat
 npx tsx scripts/workshop-cli.ts --local-llm --topic "话题"   # 网页同等，需 api_key
 ```
 

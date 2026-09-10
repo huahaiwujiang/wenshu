@@ -114,58 +114,6 @@ export function renderMarkdown(ir: ArticleIR): string {
   return lines.join("\n").trim() + "\n";
 }
 
-/** 贴图配文：提炼精华，每节 1～2 句；渲染时截断过长句 */
-const CAROUSEL_OPENING_MAX = 80;
-const CAROUSEL_PARAGRAPH_MAX = 100;
-const CAROUSEL_SECTION_PARAS_MAX = 2;
-const CAROUSEL_CLOSING_MAX = 80;
-
-function clipCarouselLine(text: string, max: number): string {
-  const t = text.trim();
-  if (t.length <= max) return t;
-  return `${t.slice(0, Math.max(0, max - 1)).trimEnd()}…`;
-}
-
-export function renderCarousel(ir: ArticleIR): string {
-  const isImageMarker = (s: string) => /^【配图[：:]/.test(s.trim());
-  /** 收束句可附带链接：链接本身不计入字数截断 */
-  const splitClosing = (raw: string): { lead: string; url?: string } => {
-    const m = raw.trim().match(/^(.*?)(https?:\/\/\S+)\s*$/s);
-    if (!m) return { lead: raw.trim() };
-    return { lead: m[1].trim(), url: m[2] };
-  };
-
-  /** 公众号配文框没有标题/摘要栏；title、digest 留在 IR，不渲进 txt */
-  const lines: string[] = [];
-
-  const opening = ir.hooks.opening?.trim();
-  if (opening) {
-    lines.push(clipCarouselLine(opening, CAROUSEL_OPENING_MAX), "");
-  }
-
-  for (const sec of ir.sections) {
-    const body = sec.paragraphs.map((p) => p.trim()).filter((p) => p && !isImageMarker(p));
-    if (sec.heading) lines.push(sec.heading, "");
-    for (const p of body.slice(0, CAROUSEL_SECTION_PARAS_MAX)) {
-      lines.push(clipCarouselLine(p, CAROUSEL_PARAGRAPH_MAX), "");
-    }
-  }
-
-  const closingRaw = ir.hooks.closing?.trim();
-  if (closingRaw) {
-    const { lead, url } = splitClosing(closingRaw);
-    if (lead) lines.push(clipCarouselLine(lead, CAROUSEL_CLOSING_MAX));
-    if (url) lines.push(url);
-    lines.push("");
-  }
-
-  if (ir.tags.length) {
-    lines.push("", ir.tags.map((t) => `#${t}`).join(" "));
-  }
-
-  return lines.join("\n").trim() + "\n";
-}
-
 export function renderTxt(ir: ArticleIR): string {
   return `${ir.title}\n\n${ir.digest}\n\n${plainBodyFromIR(ir)}\n`;
 }
@@ -174,12 +122,13 @@ export function renderPlatform(
   platform: PlatformId,
   ir: ArticleIR,
   options?: { templateHtml?: string },
-): { content: string; ext: string; filenameSuffix: string } {
+): { content: string; ext: string; filenameSuffix: string; skipWrite?: boolean } {
   switch (platform) {
     case "wechat":
       return { content: renderWechatHtml(ir, options?.templateHtml), ext: "html", filenameSuffix: "wechat" };
     case "carousel":
-      return { content: renderCarousel(ir), ext: "txt", filenameSuffix: "carousel" };
+      /** 贴图只出图，工坊不再写配文 txt */
+      return { content: "", ext: "txt", filenameSuffix: "carousel", skipWrite: true };
     case "xiaohongshu":
       return { content: renderXiaohongshu(ir), ext: "txt", filenameSuffix: "xhs" };
     case "script":

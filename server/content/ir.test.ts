@@ -82,49 +82,7 @@ describe("renderPlatform", () => {
     assert.match(xhs.content, /渲染测试/);
 
     const carousel = renderPlatform("carousel", ir);
-    assert.equal(carousel.filenameSuffix, "carousel");
-    assert.match(carousel.content, /正文/);
-    assert.doesNotMatch(carousel.content, /渲染测试/);
-    assert.doesNotMatch(carousel.content, /摘要/);
-  });
-
-  it("carousel omits image markers and outputs substantive section summaries", () => {
-    const ir = parseArticleIR(
-      JSON.stringify({
-        title: "贴图测试",
-        digest: "一句话摘要",
-        hooks: {
-          opening:
-            "Alpha 版又迭代了，这次会话体验是主线，后面还有很多细节可以慢慢展开给读者看，如果超过八十个字就应该在这里被截断而不再完整输出给读者，后面的尾巴绝对不应该出现。",
-          closing: "升级前建议备份。https://example.com/r",
-        },
-        sections: [
-          {
-            heading: "体验优化",
-            paragraphs: [
-              "【配图：a.png】",
-              "长会话导航支持预览未载入轮次，渲染内存也有优化。",
-              "运行中排队发图可正确回显，Tab 可补全斜杠命令。",
-              "第三句不应出现在输出里。",
-            ],
-          },
-        ],
-        tags: ["tag1"],
-      }),
-      FALLBACK,
-    );
-    const out = renderPlatform("carousel", ir).content;
-    assert.match(out, /^Alpha 版又迭代了/);
-    assert.doesNotMatch(out, /贴图测试/);
-    assert.doesNotMatch(out, /一句话摘要/);
-    assert.doesNotMatch(out, /【配图/);
-    assert.match(out, /体验优化/);
-    assert.match(out, /长会话导航支持预览未载入轮次/);
-    assert.match(out, /运行中排队发图可正确回显/);
-    assert.doesNotMatch(out, /第三句不应出现/);
-    assert.doesNotMatch(out, /绝对不应该出现/);
-    assert.match(out, /…/);
-    assert.match(out, /升级前建议备份/);
-    assert.match(out, /https:\/\/example\.com\/r/);
+    assert.equal(carousel.skipWrite, true);
+    assert.equal(carousel.content, "");
   });
 });

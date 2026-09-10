@@ -17,7 +17,7 @@ disable-model-invocation: true
 | 选题 / 读参考 | **Agent（你）** | WebFetch、用户给的 URL、或 `--pick-topic-only` |
 | 写 IR JSON | **Agent（你）** | Read [`server/workshop-prompts.ts`](../../../server/workshop-prompts.ts)，按人格与 IR 结构生成 |
 | 落盘真源 | **Agent（你）** | Write → `output/article/{slug}.json`（**唯一真源，无中间文件**） |
-| 渲染变体 | **CLI** | `--ir-file output/article/{slug}.json`，生成 `.wechat.html` / `.carousel.txt` 等 |
+| 渲染变体 | **CLI** | `--ir-file` 渲微信/小红书/口播等；**贴图不走 CLI**，Agent 直接出图 |
 
 ## slug 规则
 
@@ -36,33 +36,33 @@ disable-model-invocation: true
 ## 标准流程（必须）
 
 1. 解析平台、参考链接、借鉴比例等
-2. 阅读参考素材（若有 URL）；摘要写入 IR `sources`
-3. **Read `server/workshop-prompts.ts`** — 合规 + `WORKSHOP_PERSONA` + `WRITING_STANDARDS` + `WORKSHOP_DESLOP`（标题抓眼球；`digest` ≤54 字）
-4. 计算 `slug`，**Write `output/article/{slug}.json`**（完整 IR，含 `schemaVersion: 1`、`meta.createdAt`）
-5. **去 AI（强制）**：Read [deslop.md](deslop.md)，按 Gate A→F 扫 IR 可读字段并写回同一 json；用户明示「不去 AI」可跳过并在汇报注明。借鉴自 web-novelist `story-deslop`（改味不改事实），**勿照搬网文情绪外化规则**
-6. CLI 渲染变体：
+2. **搜本地资源库** [`data/assets/`](../../../data/assets/)：按话题/品牌**文件夹名**匹配（如 `deepseek`）。命中则 Read 该夹 `README.md` 并在配图中使用，禁止自绘已有 logo / 立绘。同时阅读用户给的 URL（若有）
+3. **纯贴图到此出图**：Read [carousel-images.md](carousel-images.md)，HTML 截图落到 `output/wechat-images/`，汇报 PNG 即结束（不写 IR、不去 AI、不跑 CLI）
+4. 若还要长文/小红书/口播：摘要写入 IR `sources`；**Read `server/workshop-prompts.ts`** — 合规 + `WORKSHOP_PERSONA` + `WRITING_STANDARDS` + `WORKSHOP_DESLOP`（标题抓眼球；`digest` ≤54 字）
+5. 计算 `slug`，**Write `output/article/{slug}.json`**（完整 IR，含 `schemaVersion: 1`、`meta.createdAt`）
+6. **去 AI（强制）**：Read [deslop.md](deslop.md)，按 Gate A→F 扫 IR 可读字段并写回同一 json；用户明示「不去 AI」可跳过并在汇报注明。借鉴自 web-novelist `story-deslop`（改味不改事实），**勿照搬网文情绪外化规则**
+7. CLI 渲染文案变体（**不要** `carousel`）：
 
 ```bash
 npx tsx scripts/workshop-cli.ts --ir-file "output/article/{slug}.json" --platforms wechat,xiaohongshu,script
 ```
 
-7. 根据 stdout JSON 汇报路径；预览读 `output/article/` 下文件，**不要在聊天里重写一篇当交付**
+8. 根据 stdout JSON 汇报路径；预览读 `output/article/` 与 `output/wechat-images/`，**不要在聊天里重写一篇当交付**
 
 ## 平台（`--platforms`）
 
 | 用户说法 | 平台 ID | 产出 |
 |---------|---------|------|
 | 微信长文 / 公众号 HTML | `wechat` | `{slug}.wechat.html` |
-| 贴图 / 多图配文 | `carousel` 或 `贴图` | `{slug}.carousel.txt`（配文从 opening 起，不含 title/digest） |
+| 贴图 | `carousel` 或 `贴图` | **只出图** → `output/wechat-images/`（无配文、无 `.carousel.txt`） |
 | 小红书 | `xiaohongshu` 或 `xhs` | `{slug}.xhs.txt` |
 | 口播 / 短视频 | `script` | `{slug}.script.txt` |
 
-**贴图模式**：`--platforms carousel`，**不要** `wechat`。必读 `CAROUSEL_IR_GUIDE`：
-- 先读参考素材（URL、长文、文案等）或理解配图，再写 IR
-- 图放细节；配文**提炼精华**——每图 1～2 句，至少点到 2 个具体信息，禁止「条目见图」等空话
-- `carousel.txt` 是公众号配文框纯文本：从 `hooks.opening` 起笔，**不要**把 `title`/`digest` 渲进去（配文没有标题栏/摘要头；那两字段留在 IR）
-- opening / closing ≤80 字（closing 可另附链接）
-- **禁止** `【配图：xxx.png】`；图片另存 `output/wechat-images/`
+**贴图模式**：只做图。**不要** `--platforms carousel`，**不要** 写 `{slug}.carousel.txt`。必读 [carousel-images.md](carousel-images.md)：
+- 气质对标 [`data/assets/_style/`](../../../data/assets/_style/)（浅底、亮色、大留白、可有角色），活泼明亮，不要深色清单海报
+- 先搜 [`data/assets/`](../../../data/assets/) 主题夹，**构图里用上** logo / 立绘 / Q 版，禁止自绘已有素材
+- HTML + 截图保证中文清晰；竖版约 1080×1440；落盘 `output/wechat-images/`
+- 纯贴图不必写 IR、不必去 AI、不必 CLI；同时要长文/小红书时 IR 只服务那些平台
 
 用户未指定平台时：Read `data/settings.json` 的 `workshop.platforms`；读不到则默认 `wechat,xiaohongshu,script`。
 
@@ -70,11 +70,15 @@ npx tsx scripts/workshop-cli.ts --ir-file "output/article/{slug}.json" --platfor
 
 | 场景 | 用什么 |
 |------|--------|
-| CLI `--platforms` / IR `meta.platforms` | `wechat`、`carousel`、`xiaohongshu`（别名 `xhs`）、`script` |
-| 落盘文件名 | `{slug}.json`（真源）、`{slug}.wechat.html`、`{slug}.carousel.txt` … |
+| CLI `--platforms` / IR `meta.platforms` | `wechat`、`xiaohongshu`（别名 `xhs`）、`script`（`carousel` 只表示贴图出图，CLI 不渲 txt） |
+| 落盘文件名 | `{slug}.json`（真源）、`{slug}.wechat.html`、`{slug}.xhs.txt` …；贴图 PNG 在 `output/wechat-images/` |
 | IR 字段 | `xhsBeats`、`scriptBeats` |
 
 热搜源 `weixin`（热榜，未接入）≠ 渲染平台 `wechat`（长文 HTML）。
+
+## 资源库
+
+路径：[`data/assets/`](../../../data/assets/)。一级子目录按主题命名（`deepseek`、`harness` …）。贴图气质标杆在 [`_style/`](../../../data/assets/_style/)。约定见 [`data/assets/README.md`](../../../data/assets/README.md)。可复用素材放主题夹；单次成稿进 `output/wechat-images/`。
 
 ## 合规
 
@@ -82,6 +86,8 @@ npx tsx scripts/workshop-cli.ts --ir-file "output/article/{slug}.json" --platfor
 
 ## 禁止
 
+- 贴图模式写 `{slug}.carousel.txt` 或 `--platforms carousel` 渲配文
+- 跳过 `data/assets/` 直接现画库里已有的 logo / 立绘
 - 写 `.cursor/workshop-ir.json` 或其它中间 IR 文件（真源只在 `output/article/`）
 - 因缺少 `llm.api_key` 停下来
 - `npm run workshop -- --topic ...` 且不带 `--ir-file`
@@ -94,7 +100,7 @@ npx tsx scripts/workshop-cli.ts --ir-file "output/article/{slug}.json" --platfor
 
 ## 发布公众号草稿
 
-需 `npm run dev` + `wechat.appid/appsecret`。长文用 `wechat` 平台；贴图模式一般手动发，不走 HTML 草稿。
+需 `npm run dev` + `wechat.appid/appsecret`。长文用 `wechat` 平台；贴图只发图、无配文草稿。
 
 `POST http://127.0.0.1:8787/api/publish`，body `{ "platform": "wechat", "article": "{slug}.json" }`
 

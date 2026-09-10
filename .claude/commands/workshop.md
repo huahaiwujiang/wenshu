@@ -8,10 +8,10 @@ argument-hint: [话题 或 随机热搜；可选平台、参考链接]
 **完整流程**见 `.cursor/skills/workshop/SKILL.md`。摘要：
 
 1. 不要要求 `llm.api_key`；不要写 `.cursor/workshop-ir.json`
-2. Read `server/workshop-prompts.ts`（人格 + WRITING_STANDARDS + WORKSHOP_DESLOP + 贴图读 CAROUSEL_IR_GUIDE），写 IR → **`output/article/{slug}.json`**
+2. 搜 `data/assets/` 是否有对上主题的素材夹。贴图：读 `.cursor/skills/workshop/carousel-images.md` 只出图（无配文）。长文等：Read `server/workshop-prompts.ts`，写 IR → **`output/article/{slug}.json`**
 3. **去 AI**：Read `.cursor/skills/workshop/deslop.md`，扫 IR 可读字段并写回同一 json（用户明示跳过除外）
 4. `npx tsx scripts/workshop-cli.ts --ir-file "output/article/{slug}.json" --platforms …`
-   - 贴图 → `carousel`；长文 → `wechat`；小红书 → `xhs`
-5. 汇报 `output/article/` 路径
+   - 贴图 → 只出图到 `output/wechat-images/`（不要 `--platforms carousel`）；长文 → `wechat`；小红书 → `xhs`
+5. 汇报路径；贴图只报 `output/wechat-images/`
 
 禁止：仅 `--topic` 调 CLI；禁止只聊天给完稿；禁止跳过去 AI 直接渲染（明示跳过除外）。

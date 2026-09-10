@@ -142,13 +142,16 @@ app.post("/api/articles/:name/rerender", async (c) => {
       }
     }
 
-    const variants = [...wanted].map((platform) => {
+    const variants = [...wanted].flatMap((platform) => {
       const rendered = renderPlatform(platform, ir, { templateHtml });
-      return {
-        platform,
-        filename: `${rendered.filenameSuffix}.${rendered.ext}`,
-        content: rendered.content,
-      };
+      if (rendered.skipWrite) return [];
+      return [
+        {
+          platform,
+          filename: `${rendered.filenameSuffix}.${rendered.ext}`,
+          content: rendered.content,
+        },
+      ];
     });
 
     // 覆盖同 slug

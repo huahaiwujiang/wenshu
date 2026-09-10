@@ -124,6 +124,10 @@ export async function finalizeWorkshopPackage(
   const variants: Array<{ platform: PlatformId; filename: string; content: string }> = [];
   for (const platform of wanted) {
     const rendered = renderPlatform(platform, ir, { templateHtml });
+    if (rendered.skipWrite) {
+      await log("info", `贴图 ${platform}：不生成配文，由 Agent 出图到 output/wechat-images/`);
+      continue;
+    }
     variants.push({
       platform,
       filename: `${rendered.filenameSuffix}.${rendered.ext}`,

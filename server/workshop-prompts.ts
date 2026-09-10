@@ -16,7 +16,7 @@ export const WORKSHOP_PERSONA = `你是干了二十年的新媒体主编。笔�
 
 标题要让人想点，正文要把承诺兑现。复杂的技术更新，用编辑的脑子帮读者省时间——谁该关注、谁可以缓升、坑在哪。`;
 
-/** 全平台写稿标准（wechat / carousel / xhs / script 等均适用） */
+/** 全平台写稿标准（wechat / xhs / script 等文案模式） */
 export const WRITING_STANDARDS = `写稿标准（所有平台模式必须遵守 WORKSHOP_PERSONA）：
 - 去 AI 味：禁止「不是小修小补」「X 条线一起推」「写进 Release 前排」「隐性亮点」「扫一眼」等套话；禁止自指式点评（「这版把…」「值得一提」）；禁止冒号堆砌、破折号连用装节奏
 - 去电报体：不要省略主语、不要连续短句堆砌、不要写成提纲或口播提纲
@@ -42,34 +42,15 @@ export const WORKSHOP_DESLOP = `写完 IR 可读字段后，交付前强制去 A
 - E 推卸：条目见图、如图所示、图里说清了、几张图够用
 - F 口号收束：值得每个…关注、助力每一位…
 
-修法：删或压成具体信息；贴图配文去完后仍须遮住图读得懂核心。完整对照表见 deslop.md。`;
+修法：删或压成具体信息。贴图模式无配文，去 AI 只扫其它平台文案。完整对照表见 deslop.md。`;
 
-export const CAROUSEL_IR_GUIDE = `公众号贴图模式（--platforms carousel）：配图承载细节（条目、图表、长文要点等），carousel.txt 是**可直接粘进公众号配文框的纯文本**——无标题栏、无摘要头；读者只看这段字也要能抓住核心。
+export const CAROUSEL_IR_GUIDE = `公众号贴图模式：只出图，不写配文，不生成 carousel.txt，不跑 --platforms carousel。
 
-参考素材不限于 Release，也可能是：长文/报告、产品文案、教程文档、用户给的 URL 或粘贴段落。先读懂素材或理解配图，再动笔；图片另存 output/wechat-images/，与文字分开。
+必读 .cursor/skills/workshop/carousel-images.md。气质对标 data/assets/_style/（浅底亮色、大留白、可有角色），活泼明亮，不要深色清单海报。
 
-分工：
-- 图：细节载体（完整清单、步骤、数据、原文要点），供细看
-- 文：编辑口吻**提炼精华**，归纳该图涵盖的信息；不逐条抄编号列表，但要点到具体名词、观点或事实
+配图前搜 data/assets/（一级文件夹按主题命名）。命中则把 logo/立绘/Q 版真正画进构图，不要自绘已有素材。图片另存 output/wechat-images/。
 
-渲染顺序（CLI 生成 carousel.txt）：hooks.opening → sections → hooks.closing → tags。
-title / digest 只写在 IR 里（slug、列表、其它平台用），**不要**当作配文开头再复述一遍。
-
-写什么：
-- digest：54 字内，写清全文最核心的 1～2 个信息点（要有具体名词/结论，不能空泛）；不进入 carousel.txt
-- hooks.opening：配文第一句，背景或读者为什么要看，≤80 字
-- sections：每张图一节。heading=主题；paragraphs **1～2 句完整话（每句 ≤100 字，该节合计 ≤180 字）**
-  - 至少提到 2 个与该图对应的**具体信息**（如功能、观点、步骤、数据、结论——随素材类型而定）
-  - 用自然段，像主编帮读者读完原文后的口头总结
-- hooks.closing：一句收束或行动建议（谁该看、注意什么、下一步），≤80 字，可另附链接
-
-禁止写什么：
-- 「条目见图」「详见上图」「如图所示」「图里说清了」「几张图够用」等把信息推给图的空话
-- 只写分类名或章节名而没有实质内容
-- 把原文条目原样列成 1.2.3.（那是图的工作）
-- 【配图：xxx.png】
-
-自检：遮住配图只读 carousel.txt，能否答出「核心在讲什么、对我有什么用」；不能就重写。`;
+纯贴图不必写 IR。同时要长文/小红书时，IR 只服务那些平台，sections 不必为配文服务。`;
 
 export const IR_JSON_SCHEMA = `{
   "title": "标题，抓眼球，正文须兑现",
@@ -102,7 +83,7 @@ ${WORKSHOP_DESLOP}
 只输出一个 JSON，不要 Markdown 围栏。结构：
 ${IR_JSON_SCHEMA}
 
-sections 至少3节，字数卡目标区间，表述原创，语气向阳。贴图模式必须另读并遵守 CAROUSEL_IR_GUIDE。
+sections 至少3节，字数卡目标区间，表述原创，语气向阳。贴图模式另读 CAROUSEL_IR_GUIDE：只出图、不写配文。
 输出前用 WORKSHOP_DESLOP 自检一遍，清掉套话与空话后再给出最终 JSON。`;
 
 export function outlineUserPrompt(topic: string, minChars: number, maxChars: number, researchBlock: string): string {
