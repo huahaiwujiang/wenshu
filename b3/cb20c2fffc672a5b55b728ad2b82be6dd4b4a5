@@ -1,0 +1,49 @@
+AGENTS.md
+  ad95153a4d5e99e5 12,23
+.cursor/skills/workshop/SKILL.md
+  ad95153a4d5e99e5 20,39-44,50,57,61-65,73-74,79-82,89-90,103
+.cursor/skills/workshop/carousel-images.md
+  ad95153a4d5e99e5 1-33
+.cursor/skills/workshop/reference.md
+  ad95153a4d5e99e5 18,55-57,65,68
+.cursor/commands/workshop.md
+  ad95153a4d5e99e5 1-5
+data/assets/_style/README.md
+  ad95153a4d5e99e5 1-11
+.cursor/skills/workshop/deslop.md
+  ad95153a4d5e99e5 5,19,61-62
+data/assets/README.md
+  ad95153a4d5e99e5 1-18
+.claude/commands/workshop.md
+  ad95153a4d5e99e5 11,14-15
+data/assets/deepseek/README.md
+  ad95153a4d5e99e5 1-5
+README.md
+  ad95153a4d5e99e5 4,9,11,15,46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "b3cb20c2fffc672a5b55b728ad2b82be6dd4b4a5",
+  "prompts": {
+    "ad95153a4d5e99e5": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "29000d0a-f4ba-4ca7-90de-4ae256170730",
+        "model": "grok-4.6"
+      },
+      "human_author": "huahai",
+      "messages": [],
+      "total_additions": 163,
+      "total_deletions": 64,
+      "accepted_lines": 115,
+      "overriden_lines": 0,
+      "messages_url": "https://git-ai.hsjdata.com/cas/82ac60ed98729cc03810be1dbd06af7723e4f89bd22116777467734dee72e76c"
+    }
+  },
+  "humans": {
+    "h_20193a38825318": {
+      "author": "huahai"
+    }
+  }
+}
