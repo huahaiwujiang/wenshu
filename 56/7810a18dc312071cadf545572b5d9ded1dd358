@@ -1,0 +1,45 @@
+.cursor/commands/workshop.md
+  4e66dec35edaa855 5
+README.md
+  4e66dec35edaa855 11,15
+.cursor/skills/workshop/SKILL.md
+  4e66dec35edaa855 40,57,64-65,75,82,91
+AGENTS.md
+  4e66dec35edaa855 12
+.claude/commands/workshop.md
+  4e66dec35edaa855 11,14-15,17
+data/assets/README.md
+  4e66dec35edaa855 5
+.cursor/skills/workshop/reference.md
+  4e66dec35edaa855 65-68,71
+.cursor/skills/workshop/carousel-images.md
+  4e66dec35edaa855 5-33,39-42,63
+data/assets/deepseek/README.md
+  4e66dec35edaa855 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "567810a18dc312071cadf545572b5d9ded1dd358",
+  "prompts": {
+    "4e66dec35edaa855": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "d4315455-a823-4cc1-b18d-3ae634315631",
+        "model": "default"
+      },
+      "human_author": "huahai",
+      "messages": [],
+      "total_additions": 91,
+      "total_deletions": 56,
+      "accepted_lines": 60,
+      "overriden_lines": 0,
+      "messages_url": "https://git-ai.hsjdata.com/cas/6e72b832548450127f6ec78e7f01eac13aa48ed582b2d44898861f42d185e565"
+    }
+  },
+  "humans": {
+    "h_20193a38825318": {
+      "author": "huahai"
+    }
+  }
+}
