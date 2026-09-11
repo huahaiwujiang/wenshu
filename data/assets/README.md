@@ -2,7 +2,7 @@
 
 所有工坊创作（贴图、封面、长文配图）**先在本目录按主题搜素材**，不要一上来就现画 logo / 吉祥物。
 
-成品仍输出到 `output/wechat-images/`，这里只放可复用素材。
+成品输出到 `output/wechat-images/YYYY-MM-DD/`（其下 `draft/` + PNG；同日再出则 `YYYY-MM-DD-HH-MM/`），这里只放可复用素材。详见 `.cursor/skills/workshop/carousel-images.md`。
 
 ## 约定
 

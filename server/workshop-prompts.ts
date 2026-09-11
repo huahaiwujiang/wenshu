@@ -48,7 +48,7 @@ export const CAROUSEL_IR_GUIDE = `公众号贴图模式：只出图，不写配�
 
 必读 .cursor/skills/workshop/carousel-images.md。气质对标 data/assets/_style/（浅底亮色、大留白、可有角色），活泼明亮，不要深色清单海报。
 
-配图前搜 data/assets/（一级文件夹按主题命名）。命中则把 logo/立绘/Q 版真正画进构图，不要自绘已有素材。图片另存 output/wechat-images/。
+配图前搜 data/assets/（一级文件夹按主题命名）。命中则把 logo/立绘/Q 版真正画进构图，不要自绘已有素材。先建批次目录 output/wechat-images/YYYY-MM-DD/（同日已有则 YYYY-MM-DD-HH-MM/），HTML 写入其下 draft/，等人审通过后再截图；PNG 与 draft/ 同级。
 
 纯贴图不必写 IR。同时要长文/小红书时，IR 只服务那些平台，sections 不必为配文服务。`;
 

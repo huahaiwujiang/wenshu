@@ -2,7 +2,7 @@
 
 写 DeepSeek 相关文章 / 贴图时用本夹文件，**不要现画 logo、不要用错误色块代替鲸鱼**。
 
-本夹属于资源库 [`data/assets/`](../README.md)，成品图仍输出到 `output/wechat-images/`。
+本夹属于资源库 [`data/assets/`](../README.md)，成品图仍输出到 `output/wechat-images/YYYY-MM-DD/`（见贴图规则）。
 
 ## logo/
 

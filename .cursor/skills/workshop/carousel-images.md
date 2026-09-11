@@ -2,15 +2,44 @@
 
 贴图模式**只做图**，不写配文、不生成 `{slug}.carousel.txt`、不跑 `--platforms carousel`。
 
-成稿：`output/wechat-images/`。气质标杆：[`data/assets/_style/`](../../../data/assets/_style/)（`flow.png` / `table.png` / `hero.png`）。
+成稿根目录：`output/wechat-images/`。气质标杆：[`data/assets/_style/`](../../../data/assets/_style/)（`flow.png` / `table.png` / `hero.png`）。
+
+## 目录结构（草稿与成图同批）
+
+同一批贴图共用一个日期目录，**草稿和 PNG 放一起好找**：
+
+```
+output/wechat-images/2026-09-11/
+  draft/                 # HTML 草稿（先审）
+    01-hero.html
+    02-features.html
+  01-hero.png            # 确认后截出的成图
+  02-features.png
+```
+
+| 情况 | 批次目录 |
+|------|----------|
+| 当天第一次 | `output/wechat-images/2026-09-11/` |
+| 同日已有该日期目录，再出一批 | `output/wechat-images/2026-09-11-14-06/` |
+
+规则：
+
+- 默认目录名 = 当天 `YYYY-MM-DD`
+- 若该目录**已存在**，追加本地时间写成 `YYYY-MM-DD-HH-MM`（24 小时制；**勿用冒号**，Windows 路径非法）
+- 先建批次目录 → HTML 写入其下 `draft/` → 等人审 → PNG 写在批次目录根下（与 `draft/` 同级）
+- 同一批确认出图共用一个目录；不要把同一次任务拆到两个时间戳夹
+- HTML 引用 `data/assets/` 时注意相对路径深度：从 `…/YYYY-MM-DD/draft/*.html` 一般为 `../../../../data/assets/…`
+
+汇报示例：`output/wechat-images/2026-09-11/01-hero.png`（草稿在同夹 `draft/`）。
 
 ## 流程
 
 1. Glob `data/assets/`，按主题文件夹名匹配；命中则 Read 该夹 README，**构图里真正用上** logo / 立绘 / Q 版（不要只在角落塞一个小标）。
 2. 读参考材料，把信息拆成 2～5 张图，一图一事。
-3. 用 **HTML + 截图** 做信息图（中文必须清晰）。竖版约 **1080×1440**。
-4. 落盘 `output/wechat-images/`，文件名说清顺序和内容，如 `01-routing.png`。
-5. 纯贴图不必写 IR、不必 CLI。若同时要长文/小红书，IR 只服务那些平台。
+3. 确定批次目录（见上），用 **HTML** 写草稿到 `{批次}/draft/`（竖版约 **1080×1440**，中文清晰）。
+4. **停下来等人审**：把 `draft/` 路径发给用户，说明共几张、每张在讲什么；**在用户明确确认（如「可以出图」「通过」）之前，禁止截图、禁止写 PNG**。用户改了 `draft/` 里 HTML 后，再按最新稿出图。
+5. 用户确认后，HTML → 截图，PNG 落到**同一批次目录根下**（与 `draft/` 同级），文件名说清顺序和内容，如 `01-routing.png`。
+6. 纯贴图不必写 IR、不必 CLI。若同时要长文/小红书，IR 只服务那些平台。
 
 ## 气质（活泼明亮，不要死板）
 
@@ -31,3 +60,4 @@
 - 单独看图能否看懂这张在说什么
 - 资源库有角色却整组都没用上 → 至少一张用立绘或 Q 版
 - 像旧版深色更新日志 → 推倒按 `_style` 重做
+- 有 HTML 草稿却未等用户确认就出 PNG → 违规，先审后截

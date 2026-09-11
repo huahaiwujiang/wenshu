@@ -9,7 +9,7 @@
 /workshop 随机热搜，贴图模式
 ```
 
-**分工（无需 `llm.api_key`）：** 贴图 → 搜 `data/assets/` → 按 `carousel-images.md` 出图到 `output/wechat-images/`（无配文）。长文/小红书/口播 → Read `server/workshop-prompts.ts` → Write IR → 去 AI → `--ir-file` CLI。
+**分工（无需 `llm.api_key`）：** 贴图 → 搜 `data/assets/` → 写 HTML 到 `{日期}/draft/` 等人审 → 通过后出图到同级 PNG（见 `carousel-images.md`）。长文/小红书/口播 → Read `server/workshop-prompts.ts` → Write IR → 去 AI → `--ir-file` CLI。
 
 | 工具 | 入口 |
 |------|------|

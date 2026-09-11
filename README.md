@@ -8,11 +8,11 @@
 1. **选题**：热搜（留空或 `--random-hot`）或手填话题（`--topic` / positional）  
 2. **素材**：`data/assets/{主题}/` 本地资源库 → 参考 URL 借鉴 / 自动检索摘要  
 3. **IR 中间表示**：结构化 JSON 真源  
-4. **方向 D 多平台渲染**：微信 HTML、小红书文案、口播稿；可选另存 Markdown / TXT。公众号贴图只出图（`output/wechat-images/`），无配文  
+4. **方向 D 多平台渲染**：微信 HTML、小红书文案、口播稿；可选另存 Markdown / TXT。公众号贴图只出图（`YYYY-MM-DD/draft/` 先审，PNG 同级），无配文  
 5. **封面**：本地 `wechat-images` 或 Picsum → 微信草稿  
 6. **编辑**：文章可改；IR 可「保存并重渲染」各平台变体  
 
-落盘示例：`标题.json`（IR 真源）+ `标题.wechat.html` / `标题.xhs.txt` / `标题.script.txt`；贴图 PNG 在 `output/wechat-images/`
+落盘示例：`标题.json`（IR 真源）+ `标题.wechat.html` / `标题.xhs.txt` / `标题.script.txt`；贴图在 `output/wechat-images/YYYY-MM-DD/`（`draft/` + PNG）
 
 ## 双入口
 

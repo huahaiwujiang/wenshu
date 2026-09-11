@@ -62,9 +62,12 @@ output/article/
   {slug}.script.txt     # 平台 ID: script
   {slug}.md             # 若启用 markdown
   {slug}.txt            # 若启用 txt
-output/wechat-images/      # 公众号贴图成稿（无配文 txt）
+output/wechat-images/
+  YYYY-MM-DD/              # 一批贴图（同日再出则 YYYY-MM-DD-HH-MM）
+    draft/                 # HTML 草稿（先审）
+    01-xxx.png             # 成图与 draft 同级
 ```
 
-平台 ID（CLI / API `platforms`）与文件名后缀对照：`wechat` → `.wechat.html`；`xiaohongshu`（CLI 可写 `xhs`）→ `.xhs.txt`；`script` → `.script.txt`。`carousel` / 贴图只出 PNG 到 `output/wechat-images/`，不生成 txt。IR 内对应字段为 `xhsBeats`、`scriptBeats`。
+平台 ID（CLI / API `platforms`）与文件名后缀对照：`wechat` → `.wechat.html`；`xiaohongshu`（CLI 可写 `xhs`）→ `.xhs.txt`；`script` → `.script.txt`。`carousel` / 贴图：先审批次内 `draft/` HTML，再出 PNG 到同级，不生成 txt。IR 内对应字段为 `xhsBeats`、`scriptBeats`。
 
 热搜源 `weixin`（公众号热榜，未接入）与渲染平台 `wechat` 是不同概念，勿互换。
