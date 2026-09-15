@@ -13,16 +13,33 @@
 
 ## niang/（社区 DeepSeek 娘，透明底 PNG）
 
-| 文件 | 用途 |
-|------|------|
-| `standing.png` | 全身立绘，海报主视觉 |
+贴图时按话题换姿势，避免总用同一张；Q 版适合贴纸、角落、收束。
+
+### 标准比例 · 多角度（优先轮换）
+
+| 文件 | 姿态 / 用途 |
+|------|-------------|
+| `profile.png` | 纯侧面站立（侧影） |
+| `run.png` | 奔跑动态 |
+| `kneel-book.png` | 跪坐读书 |
+| `sit-laptop.png` | 坐姿敲键盘 |
+| `point.png` | 指向观众 / 讲解 |
 | `bust.png` | 半身，头图 / 侧栏 |
-| `q-stand.png` | Q 版站立，贴纸、小卡 |
-| `q-wave.png` | Q 版挥手，欢迎 / 收束图 |
+| `rice.png` | 抱米饭（社区梗，轻松向） |
+
+### Q 版（社区 Whale-chan / dsh-whale-musume）
+
+| 文件 | 姿态 / 用途 |
+|------|-------------|
+| `q-idle.png` | 双手交叠待机 |
+| `q-think.png` | 思考 |
+| `q-greet.png` | 挥手欢迎 |
+| `q-celebrate.png` | 举手庆祝 |
+| `q-wink.png` | 眨眼 |
 
 特征：蓝发、鲸鳍耳、呆毛、深蓝女仆装、白围裙、鲸尾。
 
 ## 注意
 
 - 官方 logo 为 DeepSeek 商标，仅用于介绍其产品的配图。
-- 娘化形象参考社区 Whale-chan / 鲸鱼娘（原型「溟月」为 CC BY-NC-SA），非官方吉祥物；非商用、勿当官方人设。
+- 娘化形象参考社区 Whale-chan / 鲸鱼娘（原型「溟月」为 CC BY-NC-SA；Q 版素材来自 [dsh-whale-musume](https://github.com/Sutera-Diffusus/dsh-whale-musume)），非官方吉祥物；非商用、勿当官方人设。
