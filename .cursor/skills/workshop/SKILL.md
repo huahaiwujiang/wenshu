@@ -59,7 +59,8 @@ npx tsx scripts/workshop-cli.ts --ir-file "output/article/{slug}.json" --platfor
 | 口播 / 短视频 | `script` | `{slug}.script.txt` |
 
 **贴图模式**：只做图。**不要** `--platforms carousel`，**不要** 写 `{slug}.carousel.txt`。必读 [carousel-images.md](carousel-images.md)：
-- 气质对标 [`data/assets/_style/`](../../../data/assets/_style/)（浅底、亮色、大留白、可有角色），活泼明亮，不要深色清单海报
+- 气质对标 [`data/assets/_style/`](../../../data/assets/_style/)（浅底、亮色、可有角色），活泼明亮，不要深色清单海报
+- 更新说明（Release / changelog）：按源文四类分区、尽量原文、同类合并、小点可砍
 - 先搜 [`data/assets/`](../../../data/assets/) 主题夹，**构图里用上** logo / 立绘 / Q 版，禁止自绘已有素材
 - 先写 HTML 到 `{批次}/draft/`，**用户确认后再截图**；竖版约 1080×1440
 - 批次目录 `output/wechat-images/YYYY-MM-DD/`（同日已有则 `YYYY-MM-DD-HH-MM/`）；PNG 与 `draft/` 同级；勿用冒号
