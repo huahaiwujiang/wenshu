@@ -1,0 +1,31 @@
+.cursor/skills/workshop/carousel-images.md
+  8b70c01e2e54deac 38,44-74,77,80-83,87,92
+.cursor/skills/workshop/SKILL.md
+  8b70c01e2e54deac 62-63
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "5a1d656785a5527c072ace1bc6abe92fdfa885b0",
+  "prompts": {
+    "8b70c01e2e54deac": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "9f66b57f-8a63-4bc2-93db-4ef092f838dc",
+        "model": "default"
+      },
+      "human_author": "huahai",
+      "messages": [],
+      "total_additions": 71,
+      "total_deletions": 38,
+      "accepted_lines": 42,
+      "overriden_lines": 2,
+      "messages_url": "https://git-ai.hsjdata.com/cas/27b55693b9e77c98848a0812aa05a048d9e33863a36f03b4608e6aae8735c20c"
+    }
+  },
+  "humans": {
+    "h_20193a38825318": {
+      "author": "huahai"
+    }
+  }
+}
